@@ -6,20 +6,18 @@
 *  [PDF view (Github)](docs/Pixey3D_Wireframe.pdf)
 
 ### Tentative Schedule
-+----------------------------------------+--------------+------------+
-|                 Task                 | Start Date   | End Date   |
-+----------------------------------------+--------------+------------+
-| High-Fidelity UI design (Figma)       | Oct 17th     | Oct 26th   |
-| Session Creation and Management       | Oct 26th     | Nov 1st    |
-| 3D Annotations                        | Oct 26th     | Nov 1st    |
-| Real-time Collaboration & Auto-save   | Nov 2nd      | Nov 8th    |
-| User Interaction (Annotation)        | Nov 2nd      | Nov 8th    |
-| User Management System & Authentication| Nov 9th    | Nov 15th   |
-| Mobile Compatibility (Responsive Design)| Nov 9th    | Nov 15th   |
-| (Optional) Feedback Thread            | Nov 16th     | Nov 22nd   |
-| Testing and Quality Assurance         | Nov 23rd     | Nov 29th   |
-| Final Review and Documentation        | Nov 30th     | Dec 5th    |
-+----------------------------------------+--------------+------------+
+| Task                                   | Start Date | End Date   |
+|---------------------------------------|------------|------------|
+| High-Fidelity UI design (Figma)       | Oct 17     | Oct 26     |
+| Session Creation and Management       | Oct 26     | Nov 1      |
+| 3D Annotations                        | Oct 26     | Nov 1      |
+| Real-time Collaboration & Auto-save   | Nov 2      | Nov 8      |
+| User Interaction (Annotation)        | Nov 2      | Nov 8      |
+| User Management System & Authentication| Nov 9      | Nov 15     |
+| Mobile Compatibility (Responsive Design)| Nov 9     | Nov 15     |
+| (Optional) Feedback Thread            | Nov 16     | Nov 22     |
+| Testing and Quality Assurance         | Nov 23     | Nov 29     |
+| Final Review and Documentation        | Nov 30     | Dec 5      |
 
 
 # Set Up Guide
