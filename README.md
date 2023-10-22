@@ -5,6 +5,11 @@
 ### :page_with_curl: Wireframe
 *  [PDF view (Github)](docs/Pixey3D_Wireframe.pdf)
 
+### :triangular_flag_on_post: Figma UI design
+* `*.fig` file at `/docs`
+* [View on web](https://www.figma.com/file/jN2AarxuyrYHMZNVVM2nI8/Pixey3d_UIdesign_221012?type=design&node-id=0-1&mode=design&t=gfBADVId0WhA5ONB-0) 	
+
+
 ### Tentative Schedule
 | Task                                   | Start Date | End Date   |
 |---------------------------------------|------------|------------|
