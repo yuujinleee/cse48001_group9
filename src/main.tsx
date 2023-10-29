@@ -14,16 +14,9 @@ const light = new THREE.AmbientLight( 0xffffff ); // soft white light
 scene.background = color1;
 scene.add( light );
 
-
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
-
-// Cube model
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const cube = new THREE.Mesh( geometry, material );
-// scene.add( cube );
 
 // Load own model
 const loader = new GLTFLoader();
@@ -32,8 +25,7 @@ loader.load( 'src/assets/13_Can.gltf', function ( gltf ) {
 
   const canModel = gltf.scene;
 	scene.add( canModel );
-  const controls = new OrbitControls( camera, renderer.domElement );
-  controls.enableDamping = false
+  new OrbitControls( camera, renderer.domElement );
  
 }, undefined, function ( error ) {
 
@@ -41,12 +33,11 @@ loader.load( 'src/assets/13_Can.gltf', function ( gltf ) {
 
 } );
 
+// Reposition camera
 camera.position.z = 5;
 
 function animate() {
   requestAnimationFrame( animate );
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
   renderer.render( scene, camera );
 }
 animate();
