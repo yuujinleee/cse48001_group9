@@ -1,5 +1,4 @@
 import './App.css'
-//import ModelLoader from './components/ModelLoader'
 
 function App() {
 
