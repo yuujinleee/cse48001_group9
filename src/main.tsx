@@ -45,26 +45,26 @@ animate();
 
 
 //-------------- Code for Database connection --------------//
-import { createClient } from '@supabase/supabase-js'
-import { Database } from './database/database.types.ts'
+// import { createClient } from '@supabase/supabase-js'
+// import { Database } from './database/database.types.ts'
 
-// URL and KEY
-const SUPABASE_URL = 'https://sssfwtibjhdthffelfip.supabase.co'
-const SUPABASE_ANON_KEY= 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzc2Z3dGliamhkdGhmZmVsZmlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTg1OTIyOTUsImV4cCI6MjAxNDE2ODI5NX0.anAxyqjmgv6qIo-tiFSRvrOrona2OWCTpyNpwbDuu8M'
+// // URL and KEY
+// const SUPABASE_URL = 'https://rgwuhurybooiqejowtyt.supabase.co'
+// const SUPABASE_ANON_KEY= 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnd3VodXJ5Ym9vaXFlam93dHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTg4NDYxODIsImV4cCI6MjAxNDQyMjE4Mn0.UscB77rYU97qKJmCCWEz-thmWg-DsZ2zpe4ts68z20E'
 
 // Connect to database
-const supabase = createClient<Database>(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-)
+// const supabase = createClient<Database>(
+//     SUPABASE_URL,
+//     SUPABASE_ANON_KEY
+// )
 
 
 // Fetch data
-const { data } = await supabase
-.from('countries')
-.select('name')
+// const { data } = await supabase
+// .from('countries')
+// .select('name')
 
-console.log(data)
+// console.log(data)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
