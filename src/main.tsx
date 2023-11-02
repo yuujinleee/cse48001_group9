@@ -45,20 +45,15 @@ animate();
 
 
 //-------------- Code for Database connection --------------//
-import { supabase } from './database/supabaseClient.tsx'
+import { storageListBuckets, storageListBucketFiles } from './database/storageFunctions.tsx'
 
+// Bucket name
+const bucketName = 'testBucket'
 
-// Fetch data
-// const { data } = await supabase
-// .from('countries')
-// .select('name')
+storageListBuckets()
 
-const { data, error } = await supabase
-  .storage
-  .getBucket('avatars')
+storageListBucketFiles(bucketName)
 
-
-console.log(error || data)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
