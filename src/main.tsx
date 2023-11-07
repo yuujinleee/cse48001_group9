@@ -4,44 +4,93 @@ import App from './App.tsx'
 import './index.css'
 
 import * as THREE from 'three'
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
-//-------------- Code for 3D rendering --------------//
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-const color1 = new THREE.Color();
-const light = new THREE.AmbientLight( 0xffffff ); // soft white light
-scene.background = color1;
-scene.add( light );
+let scene, camera, renderer, controls;
+let sprite;
+const annotation = document.querySelector(".annotation");
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
 
-// Load own model
-const loader = new GLTFLoader();
 
-loader.load( 'src/assets/13_Can.gltf', function ( gltf ) {
+init();
+animate();
 
-  const canModel = gltf.scene;
-	scene.add( canModel );
-  new OrbitControls( camera, renderer.domElement );
- 
-}, undefined, function ( error ) {
+function init() {
+  //-------------- Code for 3D rendering --------------//
+  // Scene
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color();
 
-	console.error( error );
+  // Camera
+  camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 1000 );
+  camera.position.y = 2;
+  camera.position.z = 5;
 
-} );
+  // Lights
+  const amblight = new THREE.AmbientLight(0xffffff, 0.3);
+  scene.add(amblight);
 
-// Reposition camera
-camera.position.z = 5;
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  dirLight.position.set(1, 0, 1).normalize();
+  scene.add(dirLight);
+
+  // Renderer
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.autoClear = false;
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  document.body.appendChild( renderer.domElement );
+
+  // Controls
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.2;
+  controls.enableZoom = true;
+
+  new RGBELoader()
+    .setPath("src/assets/")
+    .load("winter_lake_01_1k.hdr", function (texture) {
+      texture.mapping = THREE.EquirectangularReflectionMapping;
+      scene.environment = texture; // use hdr as light source
+    });  
+
+
+  //-------------- Geometries --------------//
+  // Load 3d model
+  new GLTFLoader().load( 'src/assets/13_Can.gltf', function ( gltf ) {
+    const model = gltf.scene;
+    scene.add( model );;
+  }, undefined, function ( error ) {
+    console.error( error );
+  } );
+
+
+
+  window.addEventListener("resize", onWindowResize, false);
+}
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
 
 function animate() {
-  requestAnimationFrame( animate );
-  renderer.render( scene, camera );
+    requestAnimationFrame(animate);
+    controls.update();
+    // console.log(camera.position)
+    render();
 }
-animate();
+
+function render() {
+    renderer.render(scene, camera);
+    // updateAnnotationOpacity();
+    // updateScreenPosition();
+}
+
 
 
 //-------------- Code for Database connection --------------//
