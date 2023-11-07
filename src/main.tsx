@@ -9,10 +9,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
 let scene, camera, renderer, controls;
-let sprite;
+
+let sprite, spriteBehindObject; 
 const annotation = document.querySelector(".annotation");
-
-
 
 init();
 animate();
@@ -22,6 +21,15 @@ function init() {
   // Scene
   scene = new THREE.Scene();
   scene.background = new THREE.Color();
+
+  new THREE.TextureLoader().load('src/assets/bg_grid.png' , function(texture){
+    scene.background = texture; // scene background(grid)
+  });
+
+  new RGBELoader().load("src/assets/winter_lake_01_1k.hdr", function (texture) {
+    texture.mapping = THREE.EquirectangularReflectionMapping;
+    scene.environment = texture; // use hdr as scene light source
+  });  
 
   // Camera
   camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 1000 );
@@ -49,19 +57,14 @@ function init() {
   controls.dampingFactor = 0.2;
   controls.enableZoom = true;
 
-  new RGBELoader()
-    .setPath("src/assets/")
-    .load("winter_lake_01_1k.hdr", function (texture) {
-      texture.mapping = THREE.EquirectangularReflectionMapping;
-      scene.environment = texture; // use hdr as light source
-    });  
+
 
 
   //-------------- Geometries --------------//
   // Load 3d model
   new GLTFLoader().load( 'src/assets/13_Can.gltf', function ( gltf ) {
     const model = gltf.scene;
-    scene.add( model );;
+    scene.add( model );
   }, undefined, function ( error ) {
     console.error( error );
   } );
