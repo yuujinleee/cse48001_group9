@@ -5,16 +5,22 @@ import './index.css'
 
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
 let scene: THREE.Scene,
   camera: THREE.PerspectiveCamera,
   renderer: THREE.WebGLRenderer,
   controls: OrbitControls,
-  model: GLTFLoader;
+  model: GLTF;
 let sprite: THREE.Sprite, spriteBehindObject;
 const annotation = document.querySelector(".annotation");
+
+let raycaster: THREE.Raycaster, intersection = null;
+const pointer = new THREE.Vector2();
+const threshold = 0.02;
+
+let sphere: THREE.Mesh;
 
 init();
 animate();
@@ -60,7 +66,11 @@ function init() {
   controls.dampingFactor = 0.2;
   controls.enableZoom = true;
 
-
+  // Raycaster
+  raycaster = new THREE.Raycaster();
+	raycaster.params.Points.threshold = threshold;
+  sphere = new THREE.Mesh( new THREE.SphereGeometry( 0.05, 16, 16 ), new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
+  scene.add( sphere );
 
   //-------------- Geometries --------------//
   // Load 3d model
@@ -93,6 +103,8 @@ function init() {
     console.log(model)
 
   window.addEventListener("resize", onWindowResize, false);
+  window.addEventListener("pointermove", onPointerMove );
+  window.addEventListener("dblclick", onDoubleClick );
 }
 
 function onWindowResize() {
@@ -102,6 +114,22 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+function onPointerMove( event: PointerEvent ) {
+	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+}
+
+function onDoubleClick(){
+  raycaster.setFromCamera( pointer, camera );
+  const intersections = raycaster.intersectObject( model );
+  intersection = ( intersections.length ) > 0 ? intersections[ 0 ] : null;
+  console.log(intersection?.point);
+
+  if ( intersection !== null ) {
+		sphere.position.copy( intersection.point );
+  }
+}
+
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
@@ -109,9 +137,9 @@ function animate() {
 }
 
 function render() {
-    renderer.render(scene, camera);
-    updateAnnotationOpacity();
-    updateScreenPosition();
+  renderer.render(scene, camera);
+  updateAnnotationOpacity();
+  updateScreenPosition();
 }
 
 function updateAnnotationOpacity() {
@@ -119,9 +147,6 @@ function updateAnnotationOpacity() {
     const spriteDistance = camera.position.distanceTo(sprite.position);
     spriteBehindObject = spriteDistance > meshDistance;
     sprite.material.opacity = spriteBehindObject ? 0.25 : 1;
-
-    // Do you want a number that changes size according to its position?
-    // Comment out the following line and the `::before` pseudo-element.
     sprite.material.opacity = 0;
 }
 
