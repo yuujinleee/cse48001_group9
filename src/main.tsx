@@ -6,10 +6,14 @@ import './index.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
-let scene, camera, renderer, controls, model;
-let sprite, spriteBehindObject;
+let scene: THREE.Scene,
+  camera: THREE.PerspectiveCamera,
+  renderer: THREE.WebGLRenderer,
+  controls: OrbitControls,
+  model: GLTFLoader;
+let sprite: THREE.Sprite, spriteBehindObject;
 const annotation = document.querySelector(".annotation");
 
 init();
