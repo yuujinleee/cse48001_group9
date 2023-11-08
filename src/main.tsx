@@ -17,11 +17,13 @@ let sprite: THREE.Sprite, spriteBehindObject: boolean;
 const annotation = document.querySelector(".annotation");
 
 let raycaster: THREE.Raycaster,
-  intersection = null;
+  intersection: THREE.Intersection,
+  sphere: THREE.Mesh;
 const pointer = new THREE.Vector2();
 const threshold = 0.01;
 
-let sphere: THREE.Mesh;
+let hitpos: { x: number; y: number; z: number };
+let annotationCounter = 0;
 
 init();
 animate();
@@ -78,7 +80,7 @@ function init() {
   raycaster = new THREE.Raycaster();
   raycaster.params.Points.threshold = threshold;
   sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.05, 16, 16),
+    new THREE.SphereGeometry(0.03, 16, 16),
     new THREE.MeshBasicMaterial({ color: 0xff0000 })
   );
   scene.add(sphere);
@@ -97,7 +99,7 @@ function init() {
     }
   );
 
-  // Sprite
+  // Annotation - Sprite
   const numberTexture = new THREE.CanvasTexture(
     document.querySelector("#number")
   );
@@ -111,16 +113,13 @@ function init() {
   });
 
   sprite = new THREE.Sprite(spriteMaterial);
-  sprite.position.set(1, 1, 1);
+  sprite.position.set(0, 0, 0);
   sprite.scale.set(60, 60, 1);
-
   scene.add(sprite);
-
-  // console.log(model)
 
   window.addEventListener("resize", onWindowResize, false);
   document.addEventListener("pointermove", onPointerMove);
-  window.addEventListener("dblclick", onDoubleClick);
+  document.addEventListener("dblclick", addAnnotation);
 }
 
 function onWindowResize() {
@@ -136,7 +135,27 @@ function onPointerMove(event: PointerEvent) {
   pointer.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
 }
 
-function onDoubleClick() {}
+function addAnnotation(event: MouseEvent) {
+  if (intersection !== null) {
+    const newAnnotation = document.createElement("div");
+    newAnnotation.slot = `annotation-${annotationCounter++}`;
+    newAnnotation.classList.add("annotation");
+    newAnnotation.id = `annotation-${annotationCounter}`;
+    newAnnotation.dataset.position = hitpos.toString();
+    // if (normal != null) {
+    //   newAnnotation.dataset.normal = normal.toString();
+    // }
+    document.body.appendChild(newAnnotation);
+    // console.log("mouse = ", x, ", ", y, positionAndNormal);
+
+    const element = document.createElement("p");
+    element.classList.add("annotation");
+    element.appendChild(document.createTextNode("SampleText"));
+    document
+      .getElementById(`annotation-${annotationCounter}`)
+      .appendChild(element);
+  }
+}
 
 function animate() {
   requestAnimationFrame(animate);
@@ -146,14 +165,19 @@ function animate() {
 
 function render() {
   renderer.render(scene, camera);
+
+  // Annotation opacity and position
   updateAnnotationOpacity();
-  updateScreenPosition();
+  updateAnnotationPosition();
+
+  // Raycast intersection (object mouse hit)
   raycaster.setFromCamera(pointer, camera);
   if (model) {
     const intersections = raycaster.intersectObject(model);
     intersection = intersections.length > 0 ? intersections[0] : null;
     if (intersection !== null) {
       sphere.position.copy(intersection.point);
+      hitpos = intersection.point;
     }
   }
 }
@@ -168,12 +192,14 @@ function updateAnnotationOpacity() {
   }
 }
 
-function updateScreenPosition() {
-  const vector = new THREE.Vector3(0.2, 0.85, 0.2);
+function updateAnnotationPosition() {
+  // const arr: number[] = [0.1, 0.2, 0.3, 0.4, 0.5];
+  // arr.map((el: number) => {
+  const vector = new THREE.Vector3(hitpos?.x, hitpos?.y, hitpos?.z); // Position of Annotation
   const canvas = renderer.domElement;
 
+  // Adjust the position of annotation(3D) into 2D place
   vector.project(camera);
-
   vector.x = Math.round(
     (0.5 + vector.x / 2) * (canvas.width / window.devicePixelRatio)
   );
@@ -186,6 +212,7 @@ function updateScreenPosition() {
     annotation.style.left = `${vector.x}px`;
     annotation.style.opacity = spriteBehindObject ? 0.25 : 1;
   }
+  // });
 }
 
 //-------------- Code for Database connection --------------//
