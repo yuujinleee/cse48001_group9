@@ -13,13 +13,13 @@ let scene: THREE.Scene,
   renderer: THREE.WebGLRenderer,
   controls: OrbitControls,
   model: THREE.Group<THREE.Object3DEventMap>;
-let sprite: THREE.Sprite, spriteBehindObject;
+let sprite: THREE.Sprite, spriteBehindObject: boolean;
 const annotation = document.querySelector(".annotation");
 
 let raycaster: THREE.Raycaster,
   intersection = null;
 const pointer = new THREE.Vector2();
-const threshold = 0.02;
+const threshold = 0.01;
 
 let sphere: THREE.Mesh;
 
@@ -119,7 +119,7 @@ function init() {
   // console.log(model)
 
   window.addEventListener("resize", onWindowResize, false);
-  window.addEventListener("pointermove", onPointerMove);
+  document.addEventListener("pointermove", onPointerMove);
   window.addEventListener("dblclick", onDoubleClick);
 }
 
@@ -131,8 +131,9 @@ function onWindowResize() {
 }
 
 function onPointerMove(event: PointerEvent) {
-  pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-  pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+  pointer.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
 }
 
 function onDoubleClick() {}
