@@ -144,20 +144,19 @@ function onPointerMove(event: PointerEvent) {
 
 function addAnnotation(event: MouseEvent) {
   if (intersection !== null) {
-    const newAnnotation = document.createElement("div");
-    newAnnotation.slot = `annotation-${annotationCounter++}`;
-    newAnnotation.classList.add("annotation");
-    newAnnotation.id = `annotation-${annotationCounter}`;
+    const annon = document.createElement("div");
+    annon.slot = `annotation-${++annotationCounter}`;
+    annon.classList.add("annotation");
+    annon.id = `annotation-${annotationCounter}`;
     positionMouse.push({ ...hitpos });
-    console.log(positionMouse);
+    // console.log(positionMouse);
     // if (normal != null) {
     //   newAnnotation.dataset.normal = normal.toString();
     // }
-    document.body.appendChild(newAnnotation);
+    document.body.appendChild(annon);
     // console.log("mouse = ", x, ", ", y, positionAndNormal);
 
     const element = document.createElement("p");
-    element.classList.add("annotation");
     element.appendChild(document.createTextNode("Hello Im new annotation"));
     document
       .getElementById(`annotation-${annotationCounter}`)
@@ -216,6 +215,11 @@ function updateAnnotationPosition() {
     vector.y = Math.round(
       (0.5 - vector.y / 2) * (canvas.height / window.devicePixelRatio)
     );
+
+    const rect = renderer.domElement.getBoundingClientRect();
+    // vector.x = ((vector.x - rect.left) / (rect.right - rect.left)) * 2 - 1;
+    //  vector.y =
+    //    -((vector.y - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
 
     if (annon) {
       annon.style.top = `${vector.y}px`;
