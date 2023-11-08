@@ -7,13 +7,20 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTF, GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
-
+type PositionMouse = {
+  x: number;
+  y: number;
+  z: number;
+};
 let scene: THREE.Scene,
   camera: THREE.PerspectiveCamera,
   renderer: THREE.WebGLRenderer,
   controls: OrbitControls,
   model: THREE.Group<THREE.Object3DEventMap>;
 let sprite: THREE.Sprite, spriteBehindObject: boolean;
+
+const positionMouse = [] as PositionMouse[];
+
 const annotation = document.querySelector(".annotation");
 
 let raycaster: THREE.Raycaster,
@@ -141,7 +148,8 @@ function addAnnotation(event: MouseEvent) {
     newAnnotation.slot = `annotation-${annotationCounter++}`;
     newAnnotation.classList.add("annotation");
     newAnnotation.id = `annotation-${annotationCounter}`;
-    newAnnotation.dataset.position = hitpos.toString();
+    positionMouse.push({ ...hitpos });
+    console.log(positionMouse);
     // if (normal != null) {
     //   newAnnotation.dataset.normal = normal.toString();
     // }
@@ -150,7 +158,7 @@ function addAnnotation(event: MouseEvent) {
 
     const element = document.createElement("p");
     element.classList.add("annotation");
-    element.appendChild(document.createTextNode("SampleText"));
+    element.appendChild(document.createTextNode("Hello Im new annotation"));
     document
       .getElementById(`annotation-${annotationCounter}`)
       .appendChild(element);
@@ -195,23 +203,26 @@ function updateAnnotationOpacity() {
 function updateAnnotationPosition() {
   // const arr: number[] = [0.1, 0.2, 0.3, 0.4, 0.5];
   // arr.map((el: number) => {
-  const vector = new THREE.Vector3(hitpos?.x, hitpos?.y, hitpos?.z); // Position of Annotation
   const canvas = renderer.domElement;
 
-  // Adjust the position of annotation(3D) into 2D place
-  vector.project(camera);
-  vector.x = Math.round(
-    (0.5 + vector.x / 2) * (canvas.width / window.devicePixelRatio)
-  );
-  vector.y = Math.round(
-    (0.5 - vector.y / 2) * (canvas.height / window.devicePixelRatio)
-  );
+  positionMouse.map((element: PositionMouse, index: number) => {
+    const vector = new THREE.Vector3(element.x, element.y, element.z); // Position of Annotation
+    const annon = document.querySelector(`#annotation-${index + 1}`);
+    // Adjust the position of annotation(3D) into 2D place
+    vector.project(camera);
+    vector.x = Math.round(
+      (0.5 + vector.x / 2) * (canvas.width / window.devicePixelRatio)
+    );
+    vector.y = Math.round(
+      (0.5 - vector.y / 2) * (canvas.height / window.devicePixelRatio)
+    );
 
-  if (annotation) {
-    annotation.style.top = `${vector.y}px`;
-    annotation.style.left = `${vector.x}px`;
-    annotation.style.opacity = spriteBehindObject ? 0.25 : 1;
-  }
+    if (annon) {
+      annon.style.top = `${vector.y}px`;
+      annon.style.left = `${vector.x}px`;
+      annon.style.opacity = spriteBehindObject ? 0.25 : 1;
+    }
+  });
   // });
 }
 
@@ -220,6 +231,7 @@ import {
   storageListBuckets,
   storageListBucketFiles,
 } from "./database/storageFunctions.tsx";
+import { element } from "three/examples/jsm/nodes/Nodes.js";
 
 // Bucket name
 const bucketName = "testBucket";
