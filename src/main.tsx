@@ -45,15 +45,20 @@ animate();
 
 
 //-------------- Code for Database connection --------------//
-import { storageListBuckets, storageListBucketFiles } from './database/storageFunctions.tsx'
+import { storageListBuckets, storageListBucketFiles, storageRetrieveBucket } from './database/storageFunctions.tsx'
 
 // Bucket name
 const bucketName = 'testBucket'
 
-storageListBuckets()
+await storageListBuckets()
+await storageRetrieveBucket(bucketName)
+await storageListBucketFiles(bucketName)
 
-storageListBucketFiles(bucketName)
+import { uploadButton } from './components/uploadButton.tsx'
+uploadButton
 
+import { emptyBucketButton } from './components/emptyBucketButton.tsx'
+emptyBucketButton
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
