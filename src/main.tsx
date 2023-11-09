@@ -5,7 +5,7 @@ import "./index.css";
 
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { GLTF, GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 type PositionMouse = {
   x: number;
@@ -19,12 +19,11 @@ let scene: THREE.Scene,
   model: THREE.Group<THREE.Object3DEventMap>;
 let sprite: THREE.Sprite, spriteBehindObject: boolean;
 
-const positionMouse = [] as PositionMouse[];
-
-const annotation = document.querySelector(".annotation");
+const positionMouse = [] as PositionMouse[]; // Array holding the 3d positions of annotations
+// const annotation = document.querySelector(".annotation");
 
 let raycaster: THREE.Raycaster,
-  intersection: THREE.Intersection,
+  intersection: THREE.Intersection | null,
   sphere: THREE.Mesh;
 const pointer = new THREE.Vector2();
 const threshold = 0.01;
@@ -120,9 +119,9 @@ function init() {
   });
 
   sprite = new THREE.Sprite(spriteMaterial);
-  sprite.position.set(0, 0, 0);
-  sprite.scale.set(60, 60, 1);
-  scene.add(sprite);
+  // sprite.position.set(0, 0, 0);
+  // sprite.scale.set(60, 60, 1);
+  // scene.add(sprite);
 
   window.addEventListener("resize", onWindowResize, false);
   document.addEventListener("pointermove", onPointerMove);
@@ -142,7 +141,7 @@ function onPointerMove(event: PointerEvent) {
   pointer.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
 }
 
-function addAnnotation(event: MouseEvent) {
+function addAnnotation() {
   if (intersection !== null) {
     const annon = document.createElement("div");
     annon.slot = `annotation-${++annotationCounter}`;
@@ -200,26 +199,19 @@ function updateAnnotationOpacity() {
 }
 
 function updateAnnotationPosition() {
-  // const arr: number[] = [0.1, 0.2, 0.3, 0.4, 0.5];
-  // arr.map((el: number) => {
-  const canvas = renderer.domElement;
-
   positionMouse.map((element: PositionMouse, index: number) => {
     const vector = new THREE.Vector3(element.x, element.y, element.z); // Position of Annotation
     const annon = document.querySelector(`#annotation-${index + 1}`);
     // Adjust the position of annotation(3D) into 2D place
+
     vector.project(camera);
-    vector.x = Math.round(
-      (0.5 + vector.x / 2) * (canvas.width / window.devicePixelRatio)
-    );
-    vector.y = Math.round(
-      (0.5 - vector.y / 2) * (canvas.height / window.devicePixelRatio)
-    );
 
     const rect = renderer.domElement.getBoundingClientRect();
-    // vector.x = ((vector.x - rect.left) / (rect.right - rect.left)) * 2 - 1;
-    //  vector.y =
-    //    -((vector.y - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+    vector.x =
+      Math.round(((vector.x + 1) * (rect.right - rect.left)) / 2) + rect.left;
+    vector.y = Math.round(
+      ((1 - vector.y) * (rect.bottom - rect.top)) / 2 + rect.top
+    );
 
     if (annon) {
       annon.style.top = `${vector.y}px`;
