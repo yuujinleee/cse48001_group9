@@ -108,19 +108,19 @@ function init() {
   );
 
   // Annotation - Sprite
-  const numberTexture = new THREE.CanvasTexture(
-    document.querySelector("#number")
-  );
+  // const numberTexture = new THREE.CanvasTexture(
+  //   document.querySelectorAll(".number")
+  // );
 
-  const spriteMaterial = new THREE.SpriteMaterial({
-    map: numberTexture,
-    alphaTest: 0.5,
-    transparent: true,
-    depthTest: false,
-    depthWrite: false,
-  });
+  // const spriteMaterial = new THREE.SpriteMaterial({
+  //   map: numberTexture,
+  //   alphaTest: 0.5,
+  //   transparent: true,
+  //   depthTest: false,
+  //   depthWrite: false,
+  // });
 
-  sprite = new THREE.Sprite(spriteMaterial);
+  // sprite = new THREE.Sprite(spriteMaterial);
   // sprite.position.set(0, 0, 0);
   // sprite.scale.set(60, 60, 1);
   // scene.add(sprite);
@@ -168,7 +168,6 @@ function addAnnotation() {
     const number = document.createElement("div");
     number.appendChild(document.createTextNode(annotationCounter.toString()));
     number.classList.add("number");
-
     document
       .getElementById(`annotation-${annotationCounter}`)
       .appendChild(number);
@@ -185,8 +184,7 @@ function render() {
   renderer.render(scene, camera);
 
   // Annotation opacity and position
-  updateAnnotationOpacity();
-  updateAnnotationPosition();
+  updateAnnotationPosOpacity();
 
   // Raycast intersection (object mouse hit)
   raycaster.setFromCamera(pointer, camera);
@@ -200,23 +198,18 @@ function render() {
   }
 }
 
-function updateAnnotationOpacity() {
-  if (model) {
-    const meshDistance = camera.position.distanceTo(model?.position);
-    const spriteDistance = camera.position.distanceTo(sprite.position);
-    spriteBehindObject = spriteDistance > meshDistance;
-    sprite.material.opacity = spriteBehindObject ? 0.25 : 1;
-    sprite.material.opacity = 0;
-  }
-}
-
-function updateAnnotationPosition() {
+function updateAnnotationPosOpacity() {
   // Adjust the position of annotation(3D) into 2D place
   positionMouse.map((element: PositionMouse, index: number) => {
     const vector = new THREE.Vector3(element.x, element.y, element.z); // Position of Annotation
     const annon = document.querySelector(`#annotation-${index + 1}`);
 
     vector.project(camera);
+
+    // boolean to decide the opacity of annon
+    const isBehind =
+      camera.position.distanceTo(vector) >
+      camera.position.distanceTo(model?.position);
 
     const rect = renderer.domElement.getBoundingClientRect();
     vector.x =
@@ -228,7 +221,7 @@ function updateAnnotationPosition() {
     if (annon) {
       annon.style.top = `${vector.y}px`;
       annon.style.left = `${vector.x}px`;
-      annon.style.opacity = spriteBehindObject ? 0.25 : 1;
+      annon.style.opacity = isBehind ? 0.25 : 1;
     }
   });
   // });
