@@ -87,7 +87,9 @@ function init() {
   raycaster.params.Points.threshold = threshold;
   sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.03, 16, 16),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+    new THREE.MeshBasicMaterial({
+      color: 0xff0000,
+    })
   );
   scene.add(sphere);
 
@@ -147,6 +149,7 @@ function addAnnotation() {
     annon.slot = `annotation-${++annotationCounter}`;
     annon.classList.add("annotation");
     annon.id = `annotation-${annotationCounter}`;
+    annon.appendChild(document.createTextNode("Hello Im new annotation"));
     positionMouse.push({ ...hitpos });
     // console.log(positionMouse);
     // if (normal != null) {
@@ -155,11 +158,20 @@ function addAnnotation() {
     document.body.appendChild(annon);
     // console.log("mouse = ", x, ", ", y, positionAndNormal);
 
-    const element = document.createElement("p");
-    element.appendChild(document.createTextNode("Hello Im new annotation"));
+    // const element = document.createElement("p");
+    // element.appendChild(document.createTextNode("Hello Im new annotation"));
+    // element.classList.add("annotation");
+    // document
+    //   .getElementById(`annotation-${annotationCounter}`)
+    //   .appendChild(element);
+
+    const number = document.createElement("div");
+    number.appendChild(document.createTextNode(annotationCounter.toString()));
+    number.classList.add("number");
+
     document
       .getElementById(`annotation-${annotationCounter}`)
-      .appendChild(element);
+      .appendChild(number);
   }
 }
 
@@ -199,10 +211,10 @@ function updateAnnotationOpacity() {
 }
 
 function updateAnnotationPosition() {
+  // Adjust the position of annotation(3D) into 2D place
   positionMouse.map((element: PositionMouse, index: number) => {
     const vector = new THREE.Vector3(element.x, element.y, element.z); // Position of Annotation
     const annon = document.querySelector(`#annotation-${index + 1}`);
-    // Adjust the position of annotation(3D) into 2D place
 
     vector.project(camera);
 

@@ -79,13 +79,14 @@ button:focus-visible {
   width: 200px;
   color: #fff;
   background: rgba(0, 0, 0, 0.8);
-  border-radius: .5em;
+  border-radius: 0.5em;
   font-size: 12px;
   line-height: 1.2;
-  transition: opacity .5s;
+  transition: opacity 0.5s;
 
+  /* For numbers */
   &::before {
-    content: '1';
+    content: "1";
     position: absolute;
     top: -30px;
     left: -30px;
@@ -103,4 +104,18 @@ button:focus-visible {
 #number {
   position: absolute;
   z-index: -1;
+}
+
+.number {
+  position: absolute;
+  top: -30px;
+  left: -30px;
+  width: 30px;
+  height: 30px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 30px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.8);
 }
