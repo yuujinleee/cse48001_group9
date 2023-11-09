@@ -1,4 +1,5 @@
 import { storageEmptyBucket } from "../database/storageFunctions";
+import { bucketName } from "../main";
 
 export const emptyBucketButton = document.createElement('button');
 emptyBucketButton.textContent = 'Empty bucket'; // Set the button text
@@ -17,5 +18,5 @@ document.body.appendChild(emptyBucketButton);
 
 emptyBucketButton.addEventListener('click', () => {
   // Call your custom function here
-  storageEmptyBucket('avatars');
+  storageEmptyBucket(bucketName);
 });

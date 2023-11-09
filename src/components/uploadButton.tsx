@@ -1,4 +1,5 @@
 import { storageUploadBucket } from "../database/storageFunctions";
+import { bucketName } from "../main";
 
 
 // Create a button element for uploading files
@@ -24,7 +25,6 @@ uploadButton.addEventListener('change', async (event) => {
   if (selectedFile) {
     // Call the storageUploadBucket function with the selected file
     try {
-      const bucketName = 'avatars'; // Replace with your bucket name
       const result = await storageUploadBucket(bucketName, selectedFile);
       console.log('File uploaded successfully:', result);
     } catch (error) {

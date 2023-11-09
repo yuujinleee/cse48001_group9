@@ -18,21 +18,28 @@ scene.add( light );
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
+new OrbitControls( camera, renderer.domElement );
 
 // Load own model
-const loader = new GLTFLoader();
+export function LoadModel(modelPath: string) {
 
-loader.load( 'src/assets/13_Can.gltf', function ( gltf ) {
+  
+  const loader = new GLTFLoader();
 
-  const canModel = gltf.scene;
-	scene.add( canModel );
-  new OrbitControls( camera, renderer.domElement );
- 
+  loader.load( modelPath, function ( gltf ) {
+
+  const model = gltf.scene;
+	scene.add( model );
+  
 }, undefined, function ( error ) {
 
 	console.error( error );
 
 } );
+}
+
+const modelPath = 'src/assets/13_Can.gltf'
+LoadModel(modelPath);
 
 // Reposition camera
 camera.position.z = 5;
@@ -48,7 +55,7 @@ animate();
 import { storageListBuckets, storageListBucketFiles, storageRetrieveBucket } from './database/storageFunctions.tsx'
 
 // Bucket name
-const bucketName = 'testBucket'
+export const bucketName = 'modelBucket'
 
 await storageListBuckets()
 await storageRetrieveBucket(bucketName)
@@ -59,6 +66,9 @@ uploadButton
 
 import { emptyBucketButton } from './components/emptyBucketButton.tsx'
 emptyBucketButton
+
+import { changeModelButton } from './components/changeModelButton.tsx'
+changeModelButton
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

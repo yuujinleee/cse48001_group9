@@ -62,7 +62,13 @@ export async function storageEmptyBucket(bucketName: string){
 }
 
 // Download a file from the bucket
-export async function storageDownloadBucketFiles(bucketName: string) {
-    const { data, error} = await supabase.storage.from(bucketName).download('folder/diagram.png')
-    console.log(error||data)
+export async function storageDownloadBucketFiles(bucketName: string, path: string) {
+    const { data, error} = await supabase.storage.from(bucketName).download(path)
+    if (error) {
+      console.error('Error downloading file', error);
+      return error;
+    } else {
+      console.log('File has been downloaded:', data);
+      return data;
+    }
 }
