@@ -18,12 +18,12 @@ changeModelButton.style.borderRadius = '5px';
 document.body.appendChild(changeModelButton);
 
 changeModelButton.addEventListener('click', () => {
-    // Call your custom function here
-    
-    // CHANGE PATH!
-    const path = 'UploadedFile';
-    const data = storageDownloadBucketFiles(bucketName, path);
-    console.log("change model button works for file: " + data)
+  // Call your custom function here
+  
+  // CHANGE PATH!
+  const path = 'UploadedFile';
+  const data = storageDownloadBucketFiles(bucketName, path);
+  console.log("change model button works for file: " + data)
     
     // Update with new model
     LoadModel('src/assets/02_Cactus.gltf')

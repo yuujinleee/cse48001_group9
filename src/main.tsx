@@ -22,7 +22,6 @@ new OrbitControls( camera, renderer.domElement );
 
 // Load own model
 export function LoadModel(modelPath: string) {
-
   
   const loader = new GLTFLoader();
 
