@@ -9,6 +9,8 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import TWEEN from "@tweenjs/tween.js";
 
+// import { VertexNormalsHelper } from "three/addons/helpers/VertexNormalsHelper.js";
+
 type PositionMouse = {
   x: number;
   y: number;
@@ -20,6 +22,8 @@ let scene: THREE.Scene,
   controls: OrbitControls,
   model: THREE.Group<THREE.Object3DEventMap>;
 
+let helper: THREE.LineSegments;
+
 const positionMouse = [] as PositionMouse[]; // Array holding the 3d positions of annotations
 // const annotation = document.querySelector(".annotation");
 
@@ -30,7 +34,10 @@ const pointer = new THREE.Vector2();
 const threshold = 0.01;
 
 let hitpos: { x: number; y: number; z: number };
+let hitnormal: { x: number; y: number; z: number };
 let annotationCounter = 0;
+
+const camInitialPos = new THREE.Vector3(0, 2, 5);
 
 init();
 animate();
@@ -57,8 +64,7 @@ function init() {
     1,
     10000
   );
-  camera.position.y = 2;
-  camera.position.z = 5;
+  camera.position.copy(camInitialPos);
   camera.lookAt(scene.position);
   camera.updateMatrix();
 
@@ -80,10 +86,10 @@ function init() {
   // Controls
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
-  controls.dampingFactor = 0.2;
+  controls.dampingFactor = 0.6;
   controls.enableZoom = true;
   controls.maxDistance = 6; // for Perspective camera, may need to adjust val after testing on diff models
-  controls.minDistance = 2.5;
+  controls.minDistance = 3;
 
   // Raycaster
   raycaster = new THREE.Raycaster();
@@ -104,6 +110,8 @@ function init() {
       model = gltf.scene;
       scene.add(model);
       // console.log("model:", model);
+      // helper = new VertexNormalsHelper(model.children[0], 200, 0xff0000);
+      // scene.add(helper);
     },
     undefined,
     function (error) {
@@ -114,6 +122,7 @@ function init() {
   window.addEventListener("resize", onWindowResize, false);
   document.addEventListener("pointermove", onPointerMove);
   document.addEventListener("dblclick", addAnnotation);
+  document.addEventListener("keydown", lookatScene);
 }
 
 function onWindowResize() {
@@ -130,20 +139,9 @@ function onPointerMove(event: PointerEvent) {
 }
 
 function lookatAnnotation(annon: HTMLDivElement) {
-  // Example from model viewer (https://modelviewer.dev/examples/annotations/index.html#cameraViews)
-  // const modelViewer2 = document.querySelector("#hotspot-camera-view-demo");
-  // const annotationClicked = (annotation) => {
-  //   let dataset = annotation.dataset;
-  //   modelViewer2.cameraTarget = dataset.target;
-  //   modelViewer2.cameraOrbit = dataset.orbit;
-  //   modelViewer2.fieldOfView = "45deg";
-  // };
-
-  // modelViewer2.querySelectorAll("button").forEach((hotspot) => {
-  //   hotspot.addEventListener("click", () => annotationClicked(hotspot));
-  // });
-
-  let pos = annon.dataset.position?.split(" ");
+  // Adjust camera view to create zoom effect on annotation
+  // Tween Animation - Camera(Controls) Target
+  const pos = annon.dataset.position?.split(" ");
   if (pos) {
     new TWEEN.Tween(controls.target)
       .to(
@@ -152,13 +150,59 @@ function lookatAnnotation(annon: HTMLDivElement) {
           y: Number(pos[1]),
           z: Number(pos[2]),
         },
-        500
+        1000
       )
       .easing(TWEEN.Easing.Cubic.Out)
       .start();
-    // controls.target.set(Number(pos[0]), Number(pos[1]), Number(pos[2]));
-    // camera.lookAt(new THREE.Vector3(pos[0], pos[1], pos[2]));
+
+    // Tween Animation - Camera position
+    const oldPos = camera.position.clone();
+    const newPos = new THREE.Vector3(
+      Number(pos[0]) * 2,
+      Number(pos[1]) * 2,
+      Number(pos[2]) * 2
+    );
+    new TWEEN.Tween(oldPos)
+      .to(newPos, 1000)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .onUpdate(function () {
+        camera.position.copy(oldPos);
+      })
+      .onComplete(function () {
+        camera.position.copy(oldPos);
+      })
+      .start();
   }
+}
+
+function lookatScene() {
+  // Resets camera and controls as initial view
+  // Tween Animation - Camera(Controls) Target
+  new TWEEN.Tween(controls.target)
+    .to(
+      {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
+      1000
+    )
+    .easing(TWEEN.Easing.Cubic.Out)
+    .start();
+
+  // Tween Animation - Camera position
+  const oldPos = camera.position.clone();
+
+  new TWEEN.Tween(oldPos)
+    .to(camInitialPos, 1000)
+    .easing(TWEEN.Easing.Cubic.Out)
+    .onUpdate(function () {
+      camera.position.copy(oldPos);
+    })
+    .onComplete(function () {
+      camera.position.copy(oldPos);
+    })
+    .start();
 }
 
 function addAnnotation() {
@@ -179,13 +223,18 @@ function addAnnotation() {
 
     positionMouse.push({ ...hitpos });
 
+    if (hitnormal) {
+      annon.dataset.normal =
+        hitnormal.x.toString() +
+        " " +
+        hitnormal.y.toString() +
+        " " +
+        hitnormal.z.toString();
+    }
     // console.log(hitpos);
     // console.log(positionMouse);
-    // if (normal != null) {
-    //   annon.dataset.normal = normal.toString();
-    // }
+
     document.body.appendChild(annon);
-    // console.log("mouse = ", x, ", ", y, positionAndNormal);
 
     // const element = document.createElement("p");
     // element.appendChild(document.createTextNode("Hello Im new annotation"));
@@ -205,14 +254,15 @@ function addAnnotation() {
 
 function animate() {
   requestAnimationFrame(animate);
+  TWEEN.update();
+
   controls.update();
   render();
 }
 
 function render() {
   renderer.render(scene, camera);
-  TWEEN.update();
-  // Annotation opacity and position
+
   updateAnnotationPosOpacity();
 
   // Raycast intersection (object mouse hit)
@@ -223,6 +273,7 @@ function render() {
     if (intersection !== null) {
       sphere.position.copy(intersection.point);
       hitpos = intersection.point;
+      hitnormal = intersection.normal?.normalize();
     }
   }
 }
@@ -262,6 +313,7 @@ import {
   storageListBucketFiles,
 } from "./database/storageFunctions.tsx";
 import { element } from "three/examples/jsm/nodes/Nodes.js";
+import { Tween } from "three/examples/jsm/libs/tween.module.js";
 
 // Bucket name
 const bucketName = "testBucket";
