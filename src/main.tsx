@@ -17,7 +17,6 @@ let scene: THREE.Scene,
   renderer: THREE.WebGLRenderer,
   controls: OrbitControls,
   model: THREE.Group<THREE.Object3DEventMap>;
-let sprite: THREE.Sprite, spriteBehindObject: boolean;
 
 const positionMouse = [] as PositionMouse[]; // Array holding the 3d positions of annotations
 // const annotation = document.querySelector(".annotation");
@@ -81,6 +80,8 @@ function init() {
   controls.enableDamping = true;
   controls.dampingFactor = 0.2;
   controls.enableZoom = true;
+  controls.maxDistance = 6; // for Perspective camera, may need to adjust val after testing on diff models
+  controls.minDistance = 2.5;
 
   // Raycaster
   raycaster = new THREE.Raycaster();
@@ -100,30 +101,13 @@ function init() {
     function (gltf) {
       model = gltf.scene;
       scene.add(model);
+      console.log("model:", model);
     },
     undefined,
     function (error) {
       console.error(error);
     }
   );
-
-  // Annotation - Sprite
-  // const numberTexture = new THREE.CanvasTexture(
-  //   document.querySelectorAll(".number")
-  // );
-
-  // const spriteMaterial = new THREE.SpriteMaterial({
-  //   map: numberTexture,
-  //   alphaTest: 0.5,
-  //   transparent: true,
-  //   depthTest: false,
-  //   depthWrite: false,
-  // });
-
-  // sprite = new THREE.Sprite(spriteMaterial);
-  // sprite.position.set(0, 0, 0);
-  // sprite.scale.set(60, 60, 1);
-  // scene.add(sprite);
 
   window.addEventListener("resize", onWindowResize, false);
   document.addEventListener("pointermove", onPointerMove);
@@ -153,7 +137,7 @@ function addAnnotation() {
     positionMouse.push({ ...hitpos });
     // console.log(positionMouse);
     // if (normal != null) {
-    //   newAnnotation.dataset.normal = normal.toString();
+    //   annon.dataset.normal = normal.toString();
     // }
     document.body.appendChild(annon);
     // console.log("mouse = ", x, ", ", y, positionAndNormal);
