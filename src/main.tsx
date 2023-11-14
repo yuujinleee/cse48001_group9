@@ -7,6 +7,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
+import TWEEN from "@tweenjs/tween.js";
+
 type PositionMouse = {
   x: number;
   y: number;
@@ -101,7 +103,7 @@ function init() {
     function (gltf) {
       model = gltf.scene;
       scene.add(model);
-      console.log("model:", model);
+      // console.log("model:", model);
     },
     undefined,
     function (error) {
@@ -127,6 +129,38 @@ function onPointerMove(event: PointerEvent) {
   pointer.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
 }
 
+function lookatAnnotation(annon: HTMLDivElement) {
+  // Example from model viewer (https://modelviewer.dev/examples/annotations/index.html#cameraViews)
+  // const modelViewer2 = document.querySelector("#hotspot-camera-view-demo");
+  // const annotationClicked = (annotation) => {
+  //   let dataset = annotation.dataset;
+  //   modelViewer2.cameraTarget = dataset.target;
+  //   modelViewer2.cameraOrbit = dataset.orbit;
+  //   modelViewer2.fieldOfView = "45deg";
+  // };
+
+  // modelViewer2.querySelectorAll("button").forEach((hotspot) => {
+  //   hotspot.addEventListener("click", () => annotationClicked(hotspot));
+  // });
+
+  let pos = annon.dataset.position?.split(" ");
+  if (pos) {
+    new TWEEN.Tween(controls.target)
+      .to(
+        {
+          x: Number(pos[0]),
+          y: Number(pos[1]),
+          z: Number(pos[2]),
+        },
+        500
+      )
+      .easing(TWEEN.Easing.Cubic.Out)
+      .start();
+    // controls.target.set(Number(pos[0]), Number(pos[1]), Number(pos[2]));
+    // camera.lookAt(new THREE.Vector3(pos[0], pos[1], pos[2]));
+  }
+}
+
 function addAnnotation() {
   if (intersection !== null) {
     const annon = document.createElement("div");
@@ -134,7 +168,18 @@ function addAnnotation() {
     annon.classList.add("annotation");
     annon.id = `annotation-${annotationCounter}`;
     annon.appendChild(document.createTextNode("Hello Im new annotation"));
+    annon.addEventListener("click", () => lookatAnnotation(annon));
+
+    annon.dataset.position =
+      hitpos.x.toString() +
+      " " +
+      hitpos.y.toString() +
+      " " +
+      hitpos.z.toString();
+
     positionMouse.push({ ...hitpos });
+
+    // console.log(hitpos);
     // console.log(positionMouse);
     // if (normal != null) {
     //   annon.dataset.normal = normal.toString();
@@ -166,7 +211,7 @@ function animate() {
 
 function render() {
   renderer.render(scene, camera);
-
+  TWEEN.update();
   // Annotation opacity and position
   updateAnnotationPosOpacity();
 
