@@ -75,7 +75,6 @@ button:focus-visible {
   z-index: 1;
   margin-left: 15px;
   margin-top: 15px;
-  padding: 1em;
   width: 200px;
   color: #fff;
   background: rgba(0, 0, 0, 0.8);
@@ -118,4 +117,8 @@ button:focus-visible {
   line-height: 30px;
   text-align: center;
   background: rgba(0, 0, 0, 0.8);
+}
+
+.annon_content {
+  padding: 1em;
 }

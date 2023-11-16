@@ -36,6 +36,7 @@ const threshold = 0.01;
 let hitpos: { x: number; y: number; z: number };
 let hitnormal: { x: number; y: number; z: number } | undefined;
 let annotationCounter = 0;
+let clickedAnnon: HTMLDivElement, clickedAnnonContent: HTMLDivElement;
 
 const camInitialPos = new THREE.Vector3(0, 2, 5);
 
@@ -109,7 +110,6 @@ function init() {
     function (gltf) {
       model = gltf.scene;
       scene.add(model);
-      // console.log("model:", model);
       // helper = new VertexNormalsHelper(model.children[0], 200, 0xff0000);
       // scene.add(helper);
     },
@@ -122,7 +122,27 @@ function init() {
   window.addEventListener("resize", onWindowResize, false);
   document.addEventListener("pointermove", onPointerMove);
   document.addEventListener("dblclick", addAnnotation);
-  document.addEventListener("keydown", lookatScene);
+  // document.addEventListener("keydown", lookatScene);
+  document.addEventListener("click", function handleClickOutsideAnnon(event) {
+    // Clicked sth other than lastly clicked annotation
+    if (clickedAnnon && !clickedAnnon.contains(event.target)) {
+      clickedAnnonContent.style.display = "none";
+    }
+    // Call lookatScene() function to reset view as initial when clicked sth other than annotation
+    const c1 = event.target?.parentNode.getAttribute("class");
+    const c2 = event.target?.parentNode.parentNode.getAttribute("class");
+
+    if (
+      !(
+        c1 == "annon_content" ||
+        c1 == "annotation" ||
+        c2 == "annon_content" ||
+        c2 == "annotation"
+      )
+    ) {
+      lookatScene();
+    }
+  });
 }
 
 function onWindowResize() {
@@ -136,6 +156,20 @@ function onPointerMove(event: PointerEvent) {
   const rect = renderer.domElement.getBoundingClientRect();
   pointer.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
   pointer.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+}
+
+function toggleAnnotationVisibility(
+  annon: HTMLDivElement,
+  annon_content: HTMLDivElement
+) {
+  // If exists, set last clicked annotation 'not visible'
+  if (clickedAnnon) {
+    clickedAnnonContent.style.display = "none";
+  }
+
+  clickedAnnon = annon;
+  clickedAnnonContent = annon_content;
+  annon_content.style.display = "grid";
 }
 
 function lookatAnnotation(annon: HTMLDivElement) {
@@ -237,9 +271,9 @@ function addAnnotation() {
     //    <div annon_content></div>
     // </div>
 
-    const div1 = document.createElement("div");
-    div1.style.setProperty("display", "grid", "");
-    div1.classList.add("annon_content");
+    const annon_content = document.createElement("div");
+    annon_content.style.setProperty("display", "none", "");
+    annon_content.classList.add("annon_content");
 
     const div2 = document.createElement("div");
 
@@ -258,21 +292,27 @@ function addAnnotation() {
     btn_delete.style.setProperty("float", "right", "");
     div2.appendChild(btn_delete);
 
-    div1.appendChild(div2);
+    annon_content.appendChild(div2);
 
     const username = document.createElement("div");
     username.appendChild(document.createTextNode("Yujin Lee"));
     username.style.setProperty("font-weight", "bold", "");
-    div1.appendChild(username);
+    annon_content.appendChild(username);
 
     const number = document.createElement("div");
     number.appendChild(document.createTextNode(annotationCounter.toString()));
     number.classList.add("number");
 
-    div1.appendChild(document.createTextNode("Hello Im new annotation"));
+    annon_content.appendChild(
+      document.createTextNode("Hello Im new annotation")
+    );
+
+    annon.addEventListener("click", () =>
+      toggleAnnotationVisibility(annon, annon_content)
+    );
 
     annon.appendChild(number);
-    annon.appendChild(div1);
+    annon.appendChild(annon_content);
     document.body.appendChild(annon);
   }
 }
@@ -337,8 +377,9 @@ import {
   storageListBuckets,
   storageListBucketFiles,
 } from "./database/storageFunctions.tsx";
-import { element } from "three/examples/jsm/nodes/Nodes.js";
-import { Tween } from "three/examples/jsm/libs/tween.module.js";
+// import { func } from "three/examples/jsm/nodes/Nodes.js";
+// import { element } from "three/examples/jsm/nodes/Nodes.js";
+// import { Tween } from "three/examples/jsm/libs/tween.module.js";
 
 // Bucket name
 const bucketName = "testBucket";
