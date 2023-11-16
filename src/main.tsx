@@ -22,7 +22,7 @@ let scene: THREE.Scene,
   controls: OrbitControls,
   model: THREE.Group<THREE.Object3DEventMap>;
 
-let helper: THREE.LineSegments;
+// let helper: THREE.LineSegments;
 
 const positionMouse = [] as PositionMouse[]; // Array holding the 3d positions of annotations
 // const annotation = document.querySelector(".annotation");
@@ -34,7 +34,7 @@ const pointer = new THREE.Vector2();
 const threshold = 0.01;
 
 let hitpos: { x: number; y: number; z: number };
-let hitnormal: { x: number; y: number; z: number };
+let hitnormal: { x: number; y: number; z: number } | undefined;
 let annotationCounter = 0;
 
 const camInitialPos = new THREE.Vector3(0, 2, 5);
@@ -211,7 +211,6 @@ function addAnnotation() {
     annon.slot = `annotation-${++annotationCounter}`;
     annon.classList.add("annotation");
     annon.id = `annotation-${annotationCounter}`;
-    annon.appendChild(document.createTextNode("Hello Im new annotation"));
     annon.addEventListener("click", () => lookatAnnotation(annon));
 
     annon.dataset.position =
@@ -231,24 +230,50 @@ function addAnnotation() {
         " " +
         hitnormal.z.toString();
     }
-    // console.log(hitpos);
-    // console.log(positionMouse);
 
-    document.body.appendChild(annon);
+    // <div slot="annotation-1" class="annotation" id="annotation-1" data-position="0 0 0" data-normal="0 0 0"
+    //  data-contentvisible="hidden" style="top: 439px; left: 776.977px; opacity: 1;">
+    //    <div class="number"></div>
+    //    <div annon_content></div>
+    // </div>
 
-    // const element = document.createElement("p");
-    // element.appendChild(document.createTextNode("Hello Im new annotation"));
-    // element.classList.add("annotation");
-    // document
-    //   .getElementById(`annotation-${annotationCounter}`)
-    //   .appendChild(element);
+    const div1 = document.createElement("div");
+    div1.style.setProperty("display", "grid", "");
+    div1.classList.add("annon_content");
+
+    const div2 = document.createElement("div");
+
+    const status = document.createElement("div");
+    status.appendChild(document.createTextNode("Not Solved"));
+    status.style.setProperty("float", "left", "");
+    div2.appendChild(status);
+
+    const btn_edit = document.createElement("button");
+    btn_edit.appendChild(document.createTextNode("EDIT"));
+    btn_edit.style.setProperty("float", "right", "");
+    div2.appendChild(btn_edit);
+
+    const btn_delete = document.createElement("button");
+    btn_delete.appendChild(document.createTextNode("DEL"));
+    btn_delete.style.setProperty("float", "right", "");
+    div2.appendChild(btn_delete);
+
+    div1.appendChild(div2);
+
+    const username = document.createElement("div");
+    username.appendChild(document.createTextNode("Yujin Lee"));
+    username.style.setProperty("font-weight", "bold", "");
+    div1.appendChild(username);
 
     const number = document.createElement("div");
     number.appendChild(document.createTextNode(annotationCounter.toString()));
     number.classList.add("number");
-    document
-      .getElementById(`annotation-${annotationCounter}`)
-      .appendChild(number);
+
+    div1.appendChild(document.createTextNode("Hello Im new annotation"));
+
+    annon.appendChild(number);
+    annon.appendChild(div1);
+    document.body.appendChild(annon);
   }
 }
 
