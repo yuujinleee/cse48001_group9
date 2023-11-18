@@ -19,6 +19,9 @@ function AnnotationPopup() {
     if (e.target.value == "Solved") return setBgcolor("#E6FFA5");
   };
 
+  const id = 3;
+  const username = "Yujin Lee";
+
   return (
     <>
       <div
@@ -26,6 +29,18 @@ function AnnotationPopup() {
         style={{
           backgroundColor: bgcolor,
         }}>
+        <div style={{ textAlign: "left", margin: "3%", color: "#505050" }}>
+          #{id}
+        </div>
+        <div
+          style={{
+            textAlign: "left",
+            margin: "3%",
+            color: "#000000",
+            fontWeight: "600",
+          }}>
+          {username}
+        </div>
         <input
           className="annotation-popup-input"
           type="text"
@@ -33,15 +48,22 @@ function AnnotationPopup() {
           onChange={(e) => setValue(e.target.value)}
         />
         <div>
-          <select value={selected} onChange={handleSelect}>
+          <select
+            value={selected}
+            onChange={handleSelect}
+            style={{ float: "left", marginLeft: "3%" }}>
             {selectList.map((item) => (
               <option value={item.title} key={item.id}>
                 {item.title}
               </option>
             ))}
           </select>
-          <button>Cancel</button>
-          <button onClick={() => alert(value + " / " + selected)}>Save</button>
+          <button
+            onClick={() => alert(value + " / " + selected)}
+            style={{ float: "right", marginRight: "3%" }}>
+            Save
+          </button>
+          <button style={{ float: "right", marginRight: "2%" }}>Cancel</button>
         </div>
       </div>
     </>

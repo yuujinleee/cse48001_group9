@@ -3,8 +3,8 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  /* color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87); */
   background-color: #242424;
 
   font-synthesis: none;
@@ -12,6 +12,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }
 
 a {
@@ -133,6 +139,9 @@ select {
   width: 400px;
   height: 500px;
   display: grid;
+  position: absolute;
+  z-index: 2;
+  border: 1px solid #000000;
 }
 
 .annotation-popup-input {
@@ -140,4 +149,16 @@ select {
   min-height: 200px;
   padding: 10px;
   margin: auto;
+}
+
+#r {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 350px;
+  height: 100%;
+  background-color: #646cff;
+  border-left: 1px solid #353535;
+  padding: 10px;
+  z-index: 1;
 }

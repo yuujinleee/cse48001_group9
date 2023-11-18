@@ -6,5 +6,5 @@ export default function AnnotationEditor({
   username,
   status,
 }: TAnnotationEditor) {
-  return <>I am Annotation Editor tsx</>;
+  return <>I am "AnnotationEditor.tsx"</>;
 }
