@@ -55,6 +55,12 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+select {
+  border-radius: 8px;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -121,4 +127,17 @@ button:focus-visible {
 
 .annon_content {
   padding: 1em;
+}
+
+.annotation-popup {
+  width: 400px;
+  height: 500px;
+  display: grid;
+}
+
+.annotation-popup-input {
+  width: 90%;
+  min-height: 200px;
+  padding: 10px;
+  margin: auto;
 }
