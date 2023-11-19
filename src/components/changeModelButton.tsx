@@ -1,6 +1,5 @@
-import { storageDownloadBucketFiles } from "../database/storageFunctions";
-import { bucketName } from "../main";
-import { LoadModel } from "../main";
+import { getDownloadURL} from "../database/storageFunctions";
+import { LoadModelByURL} from "../main";
 
 export const changeModelButton = document.createElement('button');
 changeModelButton.textContent = 'Update model'; // Set the button text
@@ -17,14 +16,14 @@ changeModelButton.style.borderRadius = '5px';
 // Append the button to the body or another container element
 document.body.appendChild(changeModelButton);
 
-changeModelButton.addEventListener('click', () => {
+changeModelButton.addEventListener('click', async () => {
   // Call your custom function here
-  
-  // CHANGE PATH!
-  const path = 'UploadedFile';
-  const data = storageDownloadBucketFiles(bucketName, path);
-  console.log("change model button works for file: " + data)
+
+  // fileName should be retrieved from UploadFile function
+  const fileName = 'latest_model.gltf'
+  const dataURL = getDownloadURL(fileName);
+  console.log("dataURL: " + dataURL)
     
-    // Update with new model
-    LoadModel('src/assets/02_Cactus.gltf')
+  // Update with new model
+  LoadModelByURL(await dataURL)
 });

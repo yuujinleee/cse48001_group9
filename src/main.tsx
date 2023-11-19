@@ -20,12 +20,12 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 new OrbitControls( camera, renderer.domElement );
 
-// Load own model
-export function LoadModel(modelPath: string) {
+// Load own model by URL
+export function LoadModelByURL(modelURL: string) {
   
   const loader = new GLTFLoader();
 
-  loader.load( modelPath, function ( gltf ) {
+  loader.load( modelURL, function ( gltf ) {
 
   const model = gltf.scene;
 	scene.add( model );
@@ -37,8 +37,8 @@ export function LoadModel(modelPath: string) {
 } );
 }
 
-const modelPath = 'src/assets/13_Can.gltf'
-LoadModel(modelPath);
+// const modelPath = 'src/assets/13_Can.gltf'
+// LoadModelByPath(modelPath);
 
 // Reposition camera
 camera.position.z = 5;
@@ -68,6 +68,8 @@ emptyBucketButton
 
 import { changeModelButton } from './components/changeModelButton.tsx'
 changeModelButton
+
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

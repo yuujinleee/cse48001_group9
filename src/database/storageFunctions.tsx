@@ -1,3 +1,4 @@
+import { bucketName } from "../main";
 import { supabase } from "./supabaseClient"
 
 // List all buckets in the storage
@@ -24,20 +25,24 @@ export async function storageRetrieveBucket(bucketName: string){
 
 // Upload file to bucket
 export async function storageUploadBucket(bucketName: string, file: File){
-    
+    // const fileName = file.name
+    const fileName = 'latest_model.gltf'
     const { data, error } = await supabase
     .storage
     .from(bucketName)
-    .upload('UploadedFile', file, {
+    .upload(`${fileName}`, file, {
         cacheControl: '3600',
         upsert: false
     })
+  
 
     if (error) {
       console.error('Error for uploading to bucket:', error);
     } else {
       console.log('Upload file to bucket:', data);
     }
+
+    return fileName
 }
 
 
@@ -48,6 +53,7 @@ export async function storageListBucketFiles(bucketName: string){
         console.error('Error listing files:', error);
       } else {
         console.log('List of files:', data);
+        return data
       }
 }
 
@@ -72,3 +78,23 @@ export async function storageDownloadBucketFiles(bucketName: string, path: strin
       return data;
     }
 }
+
+export const getDownloadURL = async (fileName: string): Promise<string> => {
+  try {
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .download(fileName);
+    if (error) {
+      throw error;
+    }
+    const url = URL.createObjectURL(data);
+    console.log("URL retrieved correctly: " + url);
+    return url;
+  } catch (error) {
+    if (error instanceof Error){
+      console.log("Error downloading file: ", error.message);
+      throw error; // Re-throwing the error for handling in the calling code
+    } 
+    return ''
+  }
+};
