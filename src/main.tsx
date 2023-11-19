@@ -7,6 +7,10 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+import { uploadButton } from './components/uploadButton.tsx'
+import { emptyBucketButton } from './components/emptyBucketButton.tsx'
+import { changeModelButton } from './components/changeModelButton.tsx'
+
 //-------------- Code for 3D rendering --------------//
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -37,9 +41,6 @@ export function LoadModelByURL(modelURL: string) {
 } );
 }
 
-// const modelPath = 'src/assets/13_Can.gltf'
-// LoadModelByPath(modelPath);
-
 // Reposition camera
 camera.position.z = 5;
 
@@ -49,27 +50,11 @@ function animate() {
 }
 animate();
 
-
-//-------------- Code for Database connection --------------//
-import { storageListBuckets, storageListBucketFiles, storageRetrieveBucket } from './database/storageFunctions.tsx'
-
 // Bucket name
-export const bucketName = 'modelBucket'
-
-await storageListBuckets()
-await storageRetrieveBucket(bucketName)
-await storageListBucketFiles(bucketName)
-
-import { uploadButton } from './components/uploadButton.tsx'
-uploadButton
-
-import { emptyBucketButton } from './components/emptyBucketButton.tsx'
-emptyBucketButton
-
-import { changeModelButton } from './components/changeModelButton.tsx'
-changeModelButton
-
-
+export const bucketName = "modelBucket";
+uploadButton;
+emptyBucketButton;
+changeModelButton;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

@@ -13,14 +13,15 @@ export async function storageListBuckets(){
       }
 }
 
-// Retrieve bucket details
-export async function storageRetrieveBucket(bucketName: string){
-    const { data, error } = await supabase.storage.getBucket(bucketName);
-    if (error) {
-      console.error('Error for retrieving bucket details:', error);
-    } else {
-      console.log('Bucket details:', data);
-    }
+// List all files in bucket
+export async function storageListBucketFiles(bucketName: string){
+  const { data, error } = await supabase.storage.from(bucketName).list();
+  if (error) {
+    console.error('Error listing files:', error);
+  } else {
+    console.log('List of files:', data);
+    return data
+  }
 }
 
 // Upload file to bucket
@@ -34,8 +35,6 @@ export async function storageUploadBucket(bucketName: string, file: File){
         cacheControl: '3600',
         upsert: false
     })
-  
-
     if (error) {
       console.error('Error for uploading to bucket:', error);
     } else {
@@ -43,18 +42,6 @@ export async function storageUploadBucket(bucketName: string, file: File){
     }
 
     return fileName
-}
-
-
-// List all files in bucket
-export async function storageListBucketFiles(bucketName: string){
-      const { data, error } = await supabase.storage.from(bucketName).list();
-      if (error) {
-        console.error('Error listing files:', error);
-      } else {
-        console.log('List of files:', data);
-        return data
-      }
 }
 
 // Emtpy a bucket
@@ -67,18 +54,7 @@ export async function storageEmptyBucket(bucketName: string){
     }
 }
 
-// Download a file from the bucket
-export async function storageDownloadBucketFiles(bucketName: string, path: string) {
-    const { data, error} = await supabase.storage.from(bucketName).download(path)
-    if (error) {
-      console.error('Error downloading file', error);
-      return error;
-    } else {
-      console.log('File has been downloaded:', data);
-      return data;
-    }
-}
-
+// Get url for file in bucket
 export const getDownloadURL = async (fileName: string): Promise<string> => {
   try {
     const { data, error } = await supabase.storage
