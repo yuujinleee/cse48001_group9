@@ -1,0 +1,11 @@
+
+.container {
+    display: flex;
+    justify-content: center; /* Horizontally center */
+  }
+
+.createSessionButton {
+    margin: auto;
+    width: 100%;
+    padding: 100px;
+}
