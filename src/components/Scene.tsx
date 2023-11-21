@@ -1,10 +1,6 @@
 import { useThree, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
-import {
-  PerspectiveCamera,
-  OrbitControls,
-  Environment,
-} from "@react-three/drei";
+import { OrbitControls, Environment } from "@react-three/drei";
 import { useEffect } from "react";
 
 function Scene() {
@@ -23,7 +19,6 @@ function Scene() {
   //   camera.updateMatrix();
 
   // const camInitialPos = new THREE.Vector3(0, 2, 5);
-  const camInitialPos = [0, 2, 5];
 
   const { setSize } = useThree();
 
@@ -45,14 +40,7 @@ function Scene() {
   return (
     <>
       <Environment files="src/assets/winter_lake_01_1k.hdr" background />
-      <PerspectiveCamera
-        makeDefault
-        position={camInitialPos}
-        fov={45}
-        aspect={window.innerWidth / window.innerHeight}
-        near={1}
-        far={10000}
-      />
+
       <ambientLight color={0xffffff} intensity={0.3} />
       <directionalLight position={[1, 0, 1]} color={0xffffff} intensity={0.5} />
       <OrbitControls

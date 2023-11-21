@@ -7,9 +7,10 @@ import * as THREE from "three";
 import TWEEN from "@tweenjs/tween.js";
 
 import { Fragment, Suspense, useRef, useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import styled from "styled-components";
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, PerspectiveCamera } from "@react-three/drei";
+import ReactDOM from "react-dom";
 
 function App() {
   type Position3D = {
@@ -26,51 +27,51 @@ function App() {
 
   // let hitpos: { x: number; y: number; z: number };
   // let hitnormal: { x: number; y: number; z: number } | undefined;
-  let annotationCounter = 0;
-  let clickedAnnon: HTMLDivElement, clickedAnnonContent: HTMLDivElement;
+  // let annotationCounter = 0;
+  // let clickedAnnon: HTMLDivElement, clickedAnnonContent: HTMLDivElement;
 
-  // const camInitialPos = new THREE.Vector3(0, 2, 5);
-
+  const [annonCount, setAnnonCount] = useState(1);
+  // let annonCount = 0;
   // init();
   // animate();
 
-  function init() {
-    // Raycaster
-    raycaster = new THREE.Raycaster();
-    raycaster.params.Points.threshold = threshold;
-    sphere = new THREE.Mesh(
-      new THREE.SphereGeometry(0.03, 16, 16),
-      new THREE.MeshBasicMaterial({
-        color: 0xff0000,
-      })
-    );
-    scene.add(sphere);
+  // function init() {
+  //   // Raycaster
+  //   let raycaster = new THREE.Raycaster();
+  //   raycaster.params.Points.threshold = 0.01;
+  //   sphere = new THREE.Mesh(
+  //     new THREE.SphereGeometry(0.03, 16, 16),
+  //     new THREE.MeshBasicMaterial({
+  //       color: 0xff0000,
+  //     })
+  //   );
+  //   scene.add(sphere);
 
-    // window.addEventListener("resize", onWindowResize, false);
-    // document.addEventListener("pointermove", onPointerMove);
-    // document.addEventListener("dblclick", addAnnotation);
-    // // document.addEventListener("keydown", lookatScene);
-    // document.addEventListener("click", function handleClickOutsideAnnon(event) {
-    //   // Clicked sth other than lastly clicked annotation
-    //   if (clickedAnnon && !clickedAnnon.contains(event.target)) {
-    //     clickedAnnonContent.style.display = "none";
-    //   }
-    //   // Call lookatScene() function to reset view as initial when clicked sth other than annotation
-    //   const c1 = event.target?.parentNode.getAttribute("class");
-    //   const c2 = event.target?.parentNode.parentNode.getAttribute("class");
+  // window.addEventListener("resize", onWindowResize, false);
+  // document.addEventListener("pointermove", onPointerMove);
+  // document.addEventListener("dblclick", addAnnotation);
+  // // document.addEventListener("keydown", lookatScene);
+  // document.addEventListener("click", function handleClickOutsideAnnon(event) {
+  //   // Clicked sth other than lastly clicked annotation
+  //   if (clickedAnnon && !clickedAnnon.contains(event.target)) {
+  //     clickedAnnonContent.style.display = "none";
+  //   }
+  //   // Call lookatScene() function to reset view as initial when clicked sth other than annotation
+  //   const c1 = event.target?.parentNode.getAttribute("class");
+  //   const c2 = event.target?.parentNode.parentNode.getAttribute("class");
 
-    //   if (
-    //     !(
-    //       c1 == "annon_content" ||
-    //       c1 == "annotation" ||
-    //       c2 == "annon_content" ||
-    //       c2 == "annotation"
-    //     )
-    //   ) {
-    //     lookatScene();
-    //   }
-    // });
-  }
+  //   if (
+  //     !(
+  //       c1 == "annon_content" ||
+  //       c1 == "annotation" ||
+  //       c2 == "annon_content" ||
+  //       c2 == "annotation"
+  //     )
+  //   ) {
+  //     lookatScene();
+  //   }
+  // });
+  // }
 
   // function toggleAnnotationVisibility(
   //   annon: HTMLDivElement,
@@ -165,19 +166,21 @@ function App() {
       y: number | undefined;
       z: number | undefined;
     };
+    // style: {
+    //   top: number | undefined;
+    //   left: number | undefined;
+    //   opacity: number | undefined;
+    // };
   };
 
   const [annotationList, setAnnotationList] = useState<Annotation[]>([]);
 
-  function addAnnotation(e) {
-    // const intersections = raycaster.intersectObject(model);
+  function addAnnotation(e: PointerEvent) {
     const intersection = e.intersections.length > 0 ? e.intersections[0] : null;
     if (intersection) {
-      // sphere.position.copy(intersection.point);
-      // hitpos = intersection.point;
-      // hitnormal = intersection.normal?.normalize();
+      // console.log("DBL CLICKED !", annonCount);
       const newAnnon: Annotation = {
-        id: ++annotationCounter,
+        id: annonCount,
         username: "John Doe",
         content: "Sample Text",
         created: "Timestamp",
@@ -193,25 +196,21 @@ function App() {
           z: intersection.normal?.normalize().z,
         },
       };
-      // annotationList.push(newAnnon);
       setAnnotationList([...annotationList, newAnnon]);
-      console.log(annotationList);
+      setAnnonCount(annonCount + 1);
     }
   }
 
   // function animate() {
   //   requestAnimationFrame(animate);
   //   TWEEN.update();
-
   //   controls.update();
   //   render();
   // }
 
   // function render() {
   //   renderer.render(scene, camera);
-
-  //   updateAnnotationPosOpacity();
-
+  // updateAnnotationPosOpacity();
   //   // Raycast intersection (object mouse hit)
   //   raycaster.setFromCamera(pointer, camera);
   //   if (model) {
@@ -225,45 +224,102 @@ function App() {
   //   }
   // }
 
-  // function updateAnnotationPosOpacity() {
-  //   // Adjust the position of annotation(3D) into 2D place
-  //   positionMouse.map((element: PositionMouse, index: number) => {
-  //     const vector = new THREE.Vector3(element.x, element.y, element.z); // Position of Annotation
-  //     const annon = document.querySelector(`#annotation-${index + 1}`);
+  function Annotations() {
+    return annotationList.map((annon, index) => (
+      <Fragment key={index}>
+        <div
+          className="annotation"
+          id={`annotation-${annon.id}`}
+          // slot={`annotation-${annotationCounter}`
+          data-position={
+            annon.position.x.toString() +
+            " " +
+            annon.position.y.toString() +
+            " " +
+            annon.position.z.toString()
+          }
+          data-normal={
+            annon.normal?.x?.toString() +
+            " " +
+            annon.normal?.y?.toString() +
+            " " +
+            annon.normal?.z?.toString()
+          }
+          data-contentvisible="hidden"
+          // style={{
+          //   top: `${annon.style?.top}px`,
+          //   left: `${annon.style?.left}px`,
+          //   opacity: annon.style?.opacity,
+          // }}
+        >
+          <div className="number">{annon.id}</div>
+          <div
+            className="annon_content"
+            // style={{ display: "none" }}
+          >
+            <div style={{ display: "flex" }}>
+              <div style={{ float: "left" }}>{annon.status}</div>
+              <button style={{ float: "right" }}>Delete</button>
+              <button style={{ float: "right" }}>Edit</button>
+            </div>
+            <div style={{ fontWeight: "600", textAlign: "left" }}>
+              {annon.username}
+            </div>
+            {annon.content}
+          </div>
+        </div>
+      </Fragment>
+    ));
+  }
 
-  //     vector.project(camera);
+  const camInitialPos = new THREE.Vector3(0, 2, 5);
 
-  //     // boolean to decide the opacity of annon
-  //     const isBehind =
-  //       camera.position.distanceTo(vector) >
-  //       camera.position.distanceTo(model?.position);
+  const UpdateAnnotationPos = () => {
+    const { camera } = useThree();
 
-  //     const rect = renderer.domElement.getBoundingClientRect();
-  //     vector.x =
-  //       Math.round(((vector.x + 1) * (rect.right - rect.left)) / 2) + rect.left;
-  //     vector.y = Math.round(
-  //       ((1 - vector.y) * (rect.bottom - rect.top)) / 2 + rect.top
-  //     );
+    useFrame(() => {
+      annotationList.map((annon, index) => {
+        const vector = new THREE.Vector3(
+          annon.position.x,
+          annon.position.y,
+          annon.position.z
+        );
+        const targetdiv = document.querySelector(`#annotation-${index + 1}`);
 
-  //     if (annon) {
-  //       annon.style.top = `${vector.y}px`;
-  //       annon.style.left = `${vector.x}px`;
-  //       annon.style.opacity = isBehind ? 0.25 : 1;
-  //     }
-  //   });
-  //   // });
-  // }
+        vector.project(camera);
 
-  // function onPointerMove(event: PointerEvent) {
-  //   const rect = canvasRef.current.getBoundingClientRect();
-  //   pointer.x =
-  //     ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
-  //   pointer.y =
-  //     -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
-  //   console.log(pointer.x, pointer.y);
-  // }
+        const isBehind =
+          camera.position.distanceTo(vector) >
+          camera.position.distanceTo(scene.position);
 
-  const canvasRef = useRef();
+        // // const rect = renderer.domElement.getBoundingClientRect();
+        // const rect = canvasRef.current.getBoundingClientRect();
+        const element = ReactDOM.findDOMNode(canvasRef.current);
+        const rect = element?.getBoundingClientRect();
+
+        vector.x =
+          Math.round(((vector.x + 1) * (rect.right - rect.left)) / 2) +
+          rect.left;
+        vector.y = Math.round(
+          ((1 - vector.y) * (rect.bottom - rect.top)) / 2 + rect.top
+        );
+
+        // annon.style.top = vector.y;
+        // annon.style.left = vector.x;
+        // annon.style.opacity = isBehind ? 0.25 : 1;
+
+        if (targetdiv) {
+          targetdiv.style.top = `${vector.y}px`;
+          targetdiv.style.left = `${vector.x}px`;
+          targetdiv.style.opacity = isBehind ? 0.25 : 1;
+        }
+      });
+    });
+
+    return <></>;
+  };
+
+  const canvasRef = useRef(null!);
   const { scene } = useGLTF("src/assets/13_Can.gltf");
 
   return (
@@ -271,39 +327,22 @@ function App() {
       {/* <AnnotationPopup /> */}
       <AnnotationPanel />
       <div className="hello">
-        {annotationList.map((annon, index) => (
-          <Fragment key={index}>
-            <div
-              className="annotation"
-              id={`annotation-${annotationCounter}`}
-              // slot={`annotation-${annotationCounter}`
-              data-position={annon.position}
-              data-normal={annon.normal}
-              data-contentvisible="hidden">
-              <div className="number">{annon.id}</div>
-              <div
-                className="annon_content"
-                // style={{ display: "none" }}
-              >
-                <div style={{ display: "flex" }}>
-                  <div style={{ float: "left" }}>{annon.status}</div>
-                  <button style={{ float: "right" }}>Delete</button>
-                  <button style={{ float: "right" }}>Edit</button>
-                </div>
-                <div style={{ fontWeight: "600", textAlign: "left" }}>
-                  {annon.username}
-                </div>
-                {annon.content}
-              </div>
-            </div>
-          </Fragment>
-        ))}
+        <Annotations />
       </div>
       <Wrapper className="App">
         <Canvas className="canvas" ref={canvasRef}>
           <Suspense fallback={null}>
             <Scene />
+            <PerspectiveCamera
+              makeDefault
+              position={camInitialPos}
+              fov={45}
+              aspect={window.innerWidth / window.innerHeight}
+              near={1}
+              far={10000}
+            />
             <primitive object={scene} onDoubleClick={(e) => addAnnotation(e)} />
+            <UpdateAnnotationPos />
           </Suspense>
         </Canvas>
       </Wrapper>
