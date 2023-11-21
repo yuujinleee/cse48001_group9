@@ -1,6 +1,6 @@
 import "./App.css";
 import AnnotationPopup from "./components/AnnotationPopup";
-import AnnotationPanel from "./components/AnnotationPanel";
+// import AnnotationPanel from "./components/AnnotationPanel";
 import Scene from "./components/Scene";
 
 import * as THREE from "three";
@@ -22,11 +22,7 @@ function App() {
   // const positionMouse = [] as Position3D[]; // Array holding the 3d positions of annotations
 
   let sphere: THREE.Mesh;
-  // const pointer = new THREE.Vector2();
-  // const threshold = 0.01;
 
-  // let hitpos: { x: number; y: number; z: number };
-  // let hitnormal: { x: number; y: number; z: number } | undefined;
   // let annotationCounter = 0;
   // let clickedAnnon: HTMLDivElement, clickedAnnonContent: HTMLDivElement;
 
@@ -154,6 +150,8 @@ function App() {
   //     .start();
   // }
 
+  const [hovered, setHovered] = useState(false);
+
   type Annotation = {
     id: number;
     username: string;
@@ -166,11 +164,6 @@ function App() {
       y: number | undefined;
       z: number | undefined;
     };
-    // style: {
-    //   top: number | undefined;
-    //   left: number | undefined;
-    //   opacity: number | undefined;
-    // };
   };
 
   const [annotationList, setAnnotationList] = useState<Annotation[]>([]);
@@ -198,6 +191,20 @@ function App() {
       };
       setAnnotationList([...annotationList, newAnnon]);
       setAnnonCount(annonCount + 1);
+    }
+  }
+
+  // let SpherePos = new THREE.Vector3(0, 0, 0);
+  const [spherePos, setSpherePos] = useState<THREE.Vector3>(
+    new THREE.Vector3(0, 0, 0)
+  );
+
+  function moveSphereCursor(e: PointerEvent) {
+    const intersection = e.intersections.length > 0 ? e.intersections[0] : null;
+    if (intersection) {
+      // SpherePos = intersection.point;
+      // console.log(SpherePos);
+      setSpherePos(intersection.point);
     }
   }
 
@@ -245,13 +252,7 @@ function App() {
             " " +
             annon.normal?.z?.toString()
           }
-          data-contentvisible="hidden"
-          // style={{
-          //   top: `${annon.style?.top}px`,
-          //   left: `${annon.style?.left}px`,
-          //   opacity: annon.style?.opacity,
-          // }}
-        >
+          data-contentvisible="hidden">
           <div className="number">{annon.id}</div>
           <div
             className="annon_content"
@@ -304,10 +305,6 @@ function App() {
           ((1 - vector.y) * (rect.bottom - rect.top)) / 2 + rect.top
         );
 
-        // annon.style.top = vector.y;
-        // annon.style.left = vector.x;
-        // annon.style.opacity = isBehind ? 0.25 : 1;
-
         if (targetdiv) {
           targetdiv.style.top = `${vector.y}px`;
           targetdiv.style.left = `${vector.x}px`;
@@ -319,13 +316,37 @@ function App() {
     return <></>;
   };
 
+  function AnnotationPanel() {
+    return annotationList.map((annon, index) => (
+      <Fragment key={index}>
+        <div id={`annotationpanel-${annon.id}`}>
+          <div className="number">{annon.id}</div>
+          <div className="annon_content">
+            <div style={{ display: "flex" }}>
+              <div style={{ float: "left" }}>{annon.status}</div>
+              <button style={{ float: "right" }}>Delete</button>
+              <button style={{ float: "right" }}>Edit</button>
+            </div>
+            <div style={{ fontWeight: "600", textAlign: "left" }}>
+              {annon.username}
+            </div>
+            {annon.content}
+          </div>
+        </div>
+      </Fragment>
+    ));
+  }
+
   const canvasRef = useRef(null!);
   const { scene } = useGLTF("src/assets/13_Can.gltf");
 
   return (
     <>
       {/* <AnnotationPopup /> */}
-      <AnnotationPanel />
+      <div id="r">
+        <div>Annotation Panel</div>
+        <AnnotationPanel />
+      </div>
       <div className="hello">
         <Annotations />
       </div>
@@ -341,7 +362,17 @@ function App() {
               near={1}
               far={10000}
             />
-            <primitive object={scene} onDoubleClick={(e) => addAnnotation(e)} />
+            <primitive
+              object={scene}
+              onDoubleClick={(e) => addAnnotation(e)}
+              onPointerOver={() => setHovered(true)}
+              onPointerOut={() => setHovered(false)}
+              onPointerMove={(e) => moveSphereCursor(e)}
+            />
+            <mesh visible position={spherePos}>
+              <sphereGeometry args={[0.03, 16, 16]} />
+              <meshStandardMaterial color="red" transparent />
+            </mesh>
             <UpdateAnnotationPos />
           </Suspense>
         </Canvas>
