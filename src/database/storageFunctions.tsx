@@ -25,9 +25,8 @@ export async function storageListBucketFiles(bucketName: string){
 }
 
 // Upload file to bucket
-export async function storageUploadBucket(bucketName: string, file: File){
+export async function storageUploadBucket(bucketName: string, file: File, fileName: string){
     // const fileName = file.name
-    const fileName = 'latest_model.gltf'
     const { data, error } = await supabase
     .storage
     .from(bucketName)

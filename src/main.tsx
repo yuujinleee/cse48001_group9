@@ -8,8 +8,6 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import { uploadButton } from './components/uploadButton.tsx'
-import { emptyBucketButton } from './components/emptyBucketButton.tsx'
-import { changeModelButton } from './components/changeModelButton.tsx'
 
 //-------------- Code for 3D rendering --------------//
 const scene = new THREE.Scene();
@@ -53,8 +51,6 @@ animate();
 // Bucket name
 export const bucketName = "modelBucket";
 uploadButton;
-emptyBucketButton;
-changeModelButton;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
