@@ -30,7 +30,7 @@ uploadButton.addEventListener('change', async (event) => {
       await storageEmptyBucket(bucketName);
 
       // Upload model to bucket
-      const fileName = 'latest_model.gltf'
+      const fileName = selectedFile.name
       const result = await storageUploadBucket(bucketName, selectedFile, fileName);
       console.log('File uploaded successfully:', result);
 
