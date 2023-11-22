@@ -1,13 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import Session from './Session.tsx'
+import './session.css'
 
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-import { uploadButton } from './components/uploadButton.tsx'
+import { uploadButton } from '../../components/uploadButton.tsx'
 
 //-------------- Code for 3D rendering --------------//
 const scene = new THREE.Scene();
@@ -54,6 +54,6 @@ uploadButton;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <Session />
   </React.StrictMode>,
 )

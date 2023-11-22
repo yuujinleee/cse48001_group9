@@ -1,5 +1,5 @@
 import { storageEmptyBucket } from "../database/storageFunctions";
-import { bucketName } from "../main";
+import { bucketName } from "..";
 
 export const emptyBucketButton = document.createElement('button');
 emptyBucketButton.textContent = 'Empty bucket'; // Set the button text
