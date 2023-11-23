@@ -1,5 +1,5 @@
-import { storageUploadBucket } from "../database/storageFunctions";
-import { bucketName } from "../main";
+import { getDownloadURL, storageEmptyBucket, storageUploadBucket } from "../database/storageFunctions";
+import { LoadModelByURL, bucketName } from "../main";
 
 
 // Create a button element for uploading files
@@ -25,8 +25,22 @@ uploadButton.addEventListener('change', async (event) => {
   if (selectedFile) {
     // Call the storageUploadBucket function with the selected file
     try {
-      const result = await storageUploadBucket(bucketName, selectedFile);
+
+      // Empty bucket
+      await storageEmptyBucket(bucketName);
+
+      // Upload model to bucket
+      const fileName = selectedFile.name
+      const result = await storageUploadBucket(bucketName, selectedFile, fileName);
       console.log('File uploaded successfully:', result);
+
+      //Download model URL
+      const dataURL = await getDownloadURL(fileName);
+      console.log("dataURL: " + dataURL)
+
+      // Update with new model
+      LoadModelByURL(dataURL)
+      
     } catch (error) {
       console.error('Error uploading the file:', error);
     }
