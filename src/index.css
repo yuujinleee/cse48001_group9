@@ -3,8 +3,8 @@
   line-height: 1.5;
   font-weight: 400;
 
-  /* color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87); */
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 
   font-synthesis: none;
@@ -161,4 +161,18 @@ select {
   border-left: 1px solid #353535;
   padding: 10px;
   z-index: 1;
+}
+
+.btn_resetview {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.annonpanel_item {
+  border: 2px solid black;
+  text-align: left;
+  padding: 10px;
+  margin: 5px;
 }

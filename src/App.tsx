@@ -8,45 +8,27 @@ import TWEEN from "@tweenjs/tween.js";
 
 import { Fragment, Suspense, useRef, useState } from "react";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
-import styled from "styled-components";
-import { useGLTF, PerspectiveCamera } from "@react-three/drei";
+import {
+  useGLTF,
+  PerspectiveCamera,
+  OrbitControls,
+  CameraControls,
+} from "@react-three/drei";
 import ReactDOM from "react-dom";
+import styled from "styled-components";
 
 function App() {
-  type Position3D = {
-    x: number;
-    y: number;
-    z: number;
-  };
+  const [annonCount, setAnnonCount] = useState(1);
 
-  // const positionMouse = [] as Position3D[]; // Array holding the 3d positions of annotations
-
-  let sphere: THREE.Mesh;
-
-  // let annotationCounter = 0;
   // let clickedAnnon: HTMLDivElement, clickedAnnonContent: HTMLDivElement;
 
-  const [annonCount, setAnnonCount] = useState(1);
-  // let annonCount = 0;
   // init();
   // animate();
 
   // function init() {
-  //   // Raycaster
-  //   let raycaster = new THREE.Raycaster();
-  //   raycaster.params.Points.threshold = 0.01;
-  //   sphere = new THREE.Mesh(
-  //     new THREE.SphereGeometry(0.03, 16, 16),
-  //     new THREE.MeshBasicMaterial({
-  //       color: 0xff0000,
-  //     })
-  //   );
-  //   scene.add(sphere);
 
-  // window.addEventListener("resize", onWindowResize, false);
-  // document.addEventListener("pointermove", onPointerMove);
-  // document.addEventListener("dblclick", addAnnotation);
   // // document.addEventListener("keydown", lookatScene);
+
   // document.addEventListener("click", function handleClickOutsideAnnon(event) {
   //   // Clicked sth other than lastly clicked annotation
   //   if (clickedAnnon && !clickedAnnon.contains(event.target)) {
@@ -150,7 +132,12 @@ function App() {
   //     .start();
   // }
 
-  const [hovered, setHovered] = useState(false);
+  // function animate() {
+  //   requestAnimationFrame(animate);
+  //   TWEEN.update();
+  //   controls.update();
+  //   render();
+  // }
 
   type Annotation = {
     id: number;
@@ -194,7 +181,6 @@ function App() {
     }
   }
 
-  // let SpherePos = new THREE.Vector3(0, 0, 0);
   const [spherePos, setSpherePos] = useState<THREE.Vector3>(
     new THREE.Vector3(0, 0, 0)
   );
@@ -202,34 +188,9 @@ function App() {
   function moveSphereCursor(e: PointerEvent) {
     const intersection = e.intersections.length > 0 ? e.intersections[0] : null;
     if (intersection) {
-      // SpherePos = intersection.point;
-      // console.log(SpherePos);
       setSpherePos(intersection.point);
     }
   }
-
-  // function animate() {
-  //   requestAnimationFrame(animate);
-  //   TWEEN.update();
-  //   controls.update();
-  //   render();
-  // }
-
-  // function render() {
-  //   renderer.render(scene, camera);
-  // updateAnnotationPosOpacity();
-  //   // Raycast intersection (object mouse hit)
-  //   raycaster.setFromCamera(pointer, camera);
-  //   if (model) {
-  //     const intersections = raycaster.intersectObject(model);
-  //     intersection = intersections.length > 0 ? intersections[0] : null;
-  //     if (intersection !== null) {
-  //       sphere.position.copy(intersection.point);
-  //       hitpos = intersection.point;
-  //       hitnormal = intersection.normal?.normalize();
-  //     }
-  //   }
-  // }
 
   function Annotations() {
     return annotationList.map((annon, index) => (
@@ -237,7 +198,6 @@ function App() {
         <div
           className="annotation"
           id={`annotation-${annon.id}`}
-          // slot={`annotation-${annotationCounter}`
           data-position={
             annon.position.x.toString() +
             " " +
@@ -274,6 +234,9 @@ function App() {
   }
 
   const camInitialPos = new THREE.Vector3(0, 2, 5);
+
+  const cameraControlRef = useRef<CameraControls | null>(null);
+  cameraControlRef.current?.setPosition(0, 2, 5);
 
   const UpdateAnnotationPos = () => {
     const { camera } = useThree();
@@ -319,11 +282,12 @@ function App() {
   function AnnotationPanel() {
     return annotationList.map((annon, index) => (
       <Fragment key={index}>
-        <div id={`annotationpanel-${annon.id}`}>
-          <div className="number">{annon.id}</div>
-          <div className="annon_content">
-            <div style={{ display: "flex" }}>
-              <div style={{ float: "left" }}>{annon.status}</div>
+        <div id={`annotationpanel-${annon.id}`} className="annonpanel_item">
+          <div style={{ display: "grid" }}>
+            <div style={{ display: "block" }}>
+              <div style={{ float: "left" }}>
+                #{annon.id} · {annon.status}
+              </div>
               <button style={{ float: "right" }}>Delete</button>
               <button style={{ float: "right" }}>Edit</button>
             </div>
@@ -343,6 +307,7 @@ function App() {
   return (
     <>
       {/* <AnnotationPopup /> */}
+      <button className="btn_resetview">Reset view</button>
       <div id="r">
         <div>Annotation Panel</div>
         <AnnotationPanel />
@@ -352,29 +317,37 @@ function App() {
       </div>
       <Wrapper className="App">
         <Canvas className="canvas" ref={canvasRef}>
-          <Suspense fallback={null}>
-            <Scene />
-            <PerspectiveCamera
+          {/* <Suspense fallback={null}> */}
+          <CameraControls ref={cameraControlRef} />
+          <Scene />
+          {/* <OrbitControls
               makeDefault
-              position={camInitialPos}
+              enableDamping={true}
+              dampingFactor={0.6}
+              enableZoom={true}
+              maxDistance={6}
+              minDistance={3}
+              // target={[0, 0, 0]}
+            /> */}
+          {/* <PerspectiveCamera
+              makeDefault
+              // position={camInitialPos}
               fov={45}
               aspect={window.innerWidth / window.innerHeight}
               near={1}
               far={10000}
-            />
-            <primitive
-              object={scene}
-              onDoubleClick={(e) => addAnnotation(e)}
-              onPointerOver={() => setHovered(true)}
-              onPointerOut={() => setHovered(false)}
-              onPointerMove={(e) => moveSphereCursor(e)}
-            />
-            <mesh visible position={spherePos}>
-              <sphereGeometry args={[0.03, 16, 16]} />
-              <meshStandardMaterial color="red" transparent />
-            </mesh>
-            <UpdateAnnotationPos />
-          </Suspense>
+            /> */}
+          <primitive
+            object={scene}
+            onDoubleClick={(e: PointerEvent) => addAnnotation(e)}
+            onPointerMove={(e: PointerEvent) => moveSphereCursor(e)}
+          />
+          <mesh visible position={spherePos}>
+            <sphereGeometry args={[0.03, 16, 16]} />
+            <meshStandardMaterial color="red" transparent />
+          </mesh>
+          <UpdateAnnotationPos />
+          {/* </Suspense> */}
         </Canvas>
       </Wrapper>
     </>
