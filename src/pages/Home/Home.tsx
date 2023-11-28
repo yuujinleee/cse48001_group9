@@ -12,6 +12,7 @@ function Home() {
   return (
         <div className='content'>
             <Container>
+                <Button variant='primary' className='buttonTopRight'>Dashboard</Button>
                 <Row className='logoBoxContainer'>
                     <img src={LogoSVG} style={{ width: '350px', height: '175px' }} alt="Logo" />
                 </Row>

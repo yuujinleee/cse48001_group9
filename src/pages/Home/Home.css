@@ -77,3 +77,9 @@ body {
     position: relative;
     z-index: 1;
 }
+
+.buttonTopRight {
+    position: absolute;
+    top: 20px; /* Adjust top distance */
+    right: 20px; /* Adjust right distance */
+  }
