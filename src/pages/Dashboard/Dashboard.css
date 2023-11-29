@@ -83,3 +83,30 @@ body {
     top: 20px; /* Adjust top distance */
     right: 20px; /* Adjust right distance */
   }
+
+
+.dashboardTiles {
+    margin-top: 20px; /* Adjust spacing */
+}
+  
+.dashboardTile {
+    background-color: #f0f0f058;
+    border: 3px solid #ccc;
+    width: 45%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    height: 300px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
+    border-radius: 10px;
+}
+
+.dashboardTile:hover{
+    background-color: rgb(77, 171, 239);
+    border: 1px solid rgb(195, 200, 211);
+}
+  
+  
+  
