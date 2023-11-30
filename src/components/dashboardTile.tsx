@@ -11,8 +11,12 @@ interface TileProps {
 const TileComponent: React.FC<TileProps> = ({ id, content, author }) => {
   const imageUrl = `src/assets/tile_images/tile${id}.png`;
 
+const handleClick = () => {
+  alert(`You clicked on ${content} by ${author}`);
+};
+
   return (
-    <Col md={4} className='dashboardTile mb-3 mr-md-3'>
+    <Col md={4} className='dashboardTile mb-3 mr-md-3' onClick={handleClick}>
       <Container style={{ width: '100%', height: '80%'}}>
         <div className='text-center' style={{ width: '100%', height: '100%', overflow: 'hidden' , borderRadius: '7px'}}>
           <Image
