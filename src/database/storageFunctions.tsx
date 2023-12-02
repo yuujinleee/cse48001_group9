@@ -1,4 +1,4 @@
-import { bucketName } from "../main";
+import { bucketName } from "../pages/Session/sessionscreen";
 import { supabase } from "./supabaseClient"
 
 // List all buckets in the storage

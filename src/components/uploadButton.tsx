@@ -1,5 +1,5 @@
 import { getDownloadURL, storageEmptyBucket, storageUploadBucket } from "../database/storageFunctions";
-import { LoadModelByURL, bucketName } from "../main";
+import { LoadModelByURL, bucketName } from "..";
 
 
 // Create a button element for uploading files
