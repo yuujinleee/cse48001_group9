@@ -17,13 +17,13 @@ import {
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 
+import edit_svg from "./assets/edit.svg";
+import delete_svg from "./assets/trash-can.svg";
+
 function App() {
   const [annonCount, setAnnonCount] = useState(1);
 
-  // let clickedAnnon: HTMLDivElement, clickedAnnonContent: HTMLDivElement;
-
-  // init();
-  // animate();
+  let clickedAnnon: HTMLDivElement, clickedAnnonContent: HTMLDivElement;
 
   // function init() {
 
@@ -49,20 +49,6 @@ function App() {
   //     lookatScene();
   //   }
   // });
-  // }
-
-  // function toggleAnnotationVisibility(
-  //   annon: HTMLDivElement,
-  //   annon_content: HTMLDivElement
-  // ) {
-  //   // If exists, set last clicked annotation 'not visible'
-  //   if (clickedAnnon) {
-  //     clickedAnnonContent.style.display = "none";
-  //   }
-
-  //   clickedAnnon = annon;
-  //   clickedAnnonContent = annon_content;
-  //   annon_content.style.display = "grid";
   // }
 
   // function lookatAnnotation(annon: HTMLDivElement) {
@@ -181,18 +167,31 @@ function App() {
     }
   }
 
-  const [spherePos, setSpherePos] = useState<THREE.Vector3>(
-    new THREE.Vector3(0, 0, 0)
-  );
+  const spherePos = useRef<THREE.Vector3>(new THREE.Vector3(0, 0, 0));
 
   function moveSphereCursor(e: PointerEvent) {
     const intersection = e.intersections.length > 0 ? e.intersections[0] : null;
     if (intersection) {
-      setSpherePos(intersection.point);
+      spherePos.current = intersection.point;
     }
   }
 
   function Annotations() {
+    const annonContentRef = useRef<HTMLDivElement | null>(null);
+
+    const [clicked, setClicked] = useState(false);
+    const [cssAnnonID, setCssAnnonID] = useState<number>();
+    function toggleAnnotationVisibility(annotationID: number) {
+      // If exists, set last clicked annotation 'not visible'
+      setCssAnnonID(annotationID);
+
+      setClicked(!clicked);
+      // clickedAnnon = annon;
+      // clickedAnnonContent = annonContentRef;
+      // console.log(annonContentRef);
+      // annonContentRef.style.display = "grid";
+    }
+
     return annotationList.map((annon, index) => (
       <Fragment key={index}>
         <div
@@ -212,16 +211,31 @@ function App() {
             " " +
             annon.normal?.z?.toString()
           }
-          data-contentvisible="hidden">
-          <div className="number">{annon.id}</div>
+          data-contentvisible="hidden"
+          onClick={() => toggleAnnotationVisibility(annon.id)}>
+          <div
+            className="number"
+            style={{
+              background: annon.status == "Not Solved" ? "#ff0030" : "#ffa800",
+            }}>
+            {annon.id}
+          </div>
           <div
             className="annon_content"
-            // style={{ display: "none" }}
-          >
-            <div style={{ display: "flex" }}>
+            style={{
+              display: !clicked && cssAnnonID === annon.id ? "grid" : "none",
+              textAlign: "left",
+              background: annon.status == "Not Solved" ? "#ffd4df" : "#ffe9bd",
+            }}
+            ref={annonContentRef}>
+            <div style={{ display: "block" }}>
               <div style={{ float: "left" }}>{annon.status}</div>
-              <button style={{ float: "right" }}>Delete</button>
-              <button style={{ float: "right" }}>Edit</button>
+              <button className="annon_button" style={{ float: "right" }}>
+                <img src={delete_svg} />
+              </button>
+              <button className="annon_button" style={{ float: "right" }}>
+                <img src={edit_svg} />
+              </button>
             </div>
             <div style={{ fontWeight: "600", textAlign: "left" }}>
               {annon.username}
@@ -236,7 +250,7 @@ function App() {
   const camInitialPos = new THREE.Vector3(0, 2, 5);
 
   const cameraControlRef = useRef<CameraControls | null>(null);
-  cameraControlRef.current?.setPosition(0, 2, 5);
+  // cameraControlRef.current?.setPosition(0, 2, 5);
 
   const UpdateAnnotationPos = () => {
     const { camera } = useThree();
@@ -282,14 +296,24 @@ function App() {
   function AnnotationPanel() {
     return annotationList.map((annon, index) => (
       <Fragment key={index}>
-        <div id={`annotationpanel-${annon.id}`} className="annonpanel_item">
+        <div
+          id={`annotationpanel-${annon.id}`}
+          className="annonpanel_item"
+          style={{
+            background: annon.status == "Not Solved" ? "#ffd4df" : "#ffe9bd",
+            color: "#000000",
+          }}>
           <div style={{ display: "grid" }}>
             <div style={{ display: "block" }}>
               <div style={{ float: "left" }}>
                 #{annon.id} · {annon.status}
               </div>
-              <button style={{ float: "right" }}>Delete</button>
-              <button style={{ float: "right" }}>Edit</button>
+              <button className="annon_button" style={{ float: "right" }}>
+                <img src={delete_svg} />
+              </button>
+              <button className="annon_button" style={{ float: "right" }}>
+                <img src={edit_svg} />
+              </button>
             </div>
             <div style={{ fontWeight: "600", textAlign: "left" }}>
               {annon.username}
@@ -316,20 +340,23 @@ function App() {
         <Annotations />
       </div>
       <Wrapper className="App">
-        <Canvas className="canvas" ref={canvasRef}>
-          {/* <Suspense fallback={null}> */}
-          <CameraControls ref={cameraControlRef} />
-          <Scene />
-          {/* <OrbitControls
+        <Canvas
+          className="canvas"
+          ref={canvasRef}
+          camera={{ position: camInitialPos }}>
+          <Suspense fallback={null}>
+            {/* <CameraControls ref={cameraControlRef} /> */}
+            <Scene />
+            <OrbitControls
               makeDefault
               enableDamping={true}
               dampingFactor={0.6}
               enableZoom={true}
               maxDistance={6}
               minDistance={3}
-              // target={[0, 0, 0]}
-            /> */}
-          {/* <PerspectiveCamera
+              target={[0, 0, 0]}
+            />
+            {/* <PerspectiveCamera
               makeDefault
               // position={camInitialPos}
               fov={45}
@@ -337,17 +364,17 @@ function App() {
               near={1}
               far={10000}
             /> */}
-          <primitive
-            object={scene}
-            onDoubleClick={(e: PointerEvent) => addAnnotation(e)}
-            onPointerMove={(e: PointerEvent) => moveSphereCursor(e)}
-          />
-          <mesh visible position={spherePos}>
-            <sphereGeometry args={[0.03, 16, 16]} />
-            <meshStandardMaterial color="red" transparent />
-          </mesh>
-          <UpdateAnnotationPos />
-          {/* </Suspense> */}
+            <primitive
+              object={scene}
+              onDoubleClick={(e: PointerEvent) => addAnnotation(e)}
+              onPointerMove={(e: PointerEvent) => moveSphereCursor(e)}
+            />
+            <mesh visible position={spherePos}>
+              <sphereGeometry args={[0.03, 16, 16]} />
+              <meshStandardMaterial color="red" transparent />
+            </mesh>
+            <UpdateAnnotationPos />
+          </Suspense>
         </Canvas>
       </Wrapper>
     </>

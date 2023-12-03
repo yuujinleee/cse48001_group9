@@ -19,18 +19,18 @@ function AnnotationPopup() {
     if (e.target.value == "Solved") return setBgcolor("#E6FFA5");
   };
 
-  const id = 3;
-  const username = "Yujin Lee";
+  // const id = 3;
+  // const username = "Yujin Lee";
 
   return (
     <>
       <div
-        className="annotation-popup"
+        className="annon_popup"
         style={{
           backgroundColor: bgcolor,
         }}>
         <div style={{ textAlign: "left", margin: "3%", color: "#505050" }}>
-          #{id}
+          #3
         </div>
         <div
           style={{
@@ -39,10 +39,10 @@ function AnnotationPopup() {
             color: "#000000",
             fontWeight: "600",
           }}>
-          {username}
+          Yujin Lee
         </div>
         <input
-          className="annotation-popup-input"
+          className="annon_popup_input"
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
