@@ -347,7 +347,7 @@ function App() {
           <Suspense fallback={null}>
             {/* <CameraControls ref={cameraControlRef} /> */}
             <Scene />
-            <OrbitControls
+            {/* <OrbitControls
               makeDefault
               enableDamping={true}
               dampingFactor={0.6}
@@ -355,7 +355,7 @@ function App() {
               maxDistance={6}
               minDistance={3}
               target={[0, 0, 0]}
-            />
+            /> */}
             {/* <PerspectiveCamera
               makeDefault
               // position={camInitialPos}
