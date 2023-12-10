@@ -9,16 +9,14 @@
 ### :page_with_curl:	Final Presentation
 * [PDF view (Github)](docs/Pixey_Final_Presentation.pdf)
 
-### :page_with_curl: Wireframe UI design
+### 🎨 Wireframe UI design
 *  [PDF view (Github)](docs/Pixey3D_Wireframe.pdf)
 
-### :triangular_flag_on_post: Figma UI design
+### 🎨 Figma UI design
 * `*.fig` file at `/docs`
 * [View on web](https://www.figma.com/file/jN2AarxuyrYHMZNVVM2nI8/Pixey3d_UIdesign_221012?type=design&node-id=0-1&mode=design&t=gfBADVId0WhA5ONB-0) 	
 
 
 # Set Up Guide
-1. (Vite) Run `$npm install` to install the modules
-
-
-2. (Vite) Run `$npm run dev` and access the local host address (e.g. `http://localhost:xxxx/`).
+1. Run `$npm install` to install the modules
+2. Run `$npm run dev` and access the local host address (e.g. `http://localhost:xxxx/`).
