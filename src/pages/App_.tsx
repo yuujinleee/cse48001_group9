@@ -523,15 +523,20 @@ function App({ session, annotationData }: TSession) {
                   annon.normal?.z?.toString()
                 }
                 data-contentvisible="hidden"
-                style={{ textAlign: "left" }}
-              >
+                style={{
+                  backgroundColor:
+                    annon.status === "In Progress"
+                      ? "#FFE9BD"
+                      : annon.status === "Solved"
+                      ? "#E6FFA5"
+                      : "#FFD4DF",
+                }}>
                 <div
                   className="number"
                   onClick={() => {
                     anoRef.current = annon.anno_id;
                     setAnoNumClicked(!anoNumClicked);
-                  }}
-                >
+                  }}>
                   {annon.anno_id}
                 </div>
                 <div
@@ -541,15 +546,22 @@ function App({ session, annotationData }: TSession) {
                       anoNumClicked && annon.anno_id === anoRef.current
                         ? "grid"
                         : "none",
-                  }}
-                >
+                  }}>
                   <div>
                     <div style={{ float: "left" }}>{annon.status}</div>
                     <div style={{ float: "right" }}>
-                      <button>
+                      <button
+                        style={{
+                          background: "transparent",
+                          padding: "0.3em 0.6em",
+                        }}>
                         <img src={editsvg} alt="edit" />
                       </button>
-                      <button>
+                      <button
+                        style={{
+                          background: "transparent",
+                          padding: "0.3em 0.6em",
+                        }}>
                         <img src={trashcansvg} alt="delete" />
                       </button>
                     </div>
@@ -622,31 +634,49 @@ function App({ session, annotationData }: TSession) {
         <div
           id={`annotationpanel-${annon.anno_id}`}
           className="annonpanel_item"
-        >
+          style={{
+            backgroundColor:
+              annon.status === "In Progress"
+                ? "#FFE9BD"
+                : annon.status === "Solved"
+                ? "#E6FFA5"
+                : "#FFD4DF",
+          }}>
           <div style={{ display: "grid" }}>
             <div style={{ display: "block" }}>
               <div style={{ float: "left" }}>
                 #{annon.anno_id} · {annon.status}
               </div>
-              <button
-                style={{ float: "right", color: "#fff" }}
-                onClick={() => deleteAnnotation(annon as Annotation)}
-              >
-                <img src={trashcansvg} alt="edit" />
-              </button>
-              <button
-                style={{ float: "right", color: "#fff" }}
-                onClick={() => {
-                  setSelectedAnnotation(annon);
-                  setIsModified(true);
-                  setAnnotationContent(annon.content);
-                  setAnnotationTitle(annon.title);
-                  setAnnationStatus(annon.status);
-                  dialogRef.current?.showModal();
-                }}
-              >
-                <img src={editsvg} alt="edit" />
-              </button>
+
+              {annon.user_id === session.user.id ? (
+                <>
+                  <button
+                    style={{
+                      float: "right",
+                      background: "transparent",
+                      padding: "0.3em 0.8em",
+                    }}
+                    onClick={() => deleteAnnotation(annon as Annotation)}>
+                    <img src={trashcansvg} alt="delete" />
+                  </button>
+                  <button
+                    style={{
+                      float: "right",
+                      background: "transparent",
+                      padding: "0.3em 0.6em",
+                    }}
+                    onClick={() => {
+                      setSelectedAnnotation(annon);
+                      setIsModified(true);
+                      setAnnotationContent(annon.content);
+                      setAnnotationTitle(annon.title);
+                      setAnnationStatus(annon.status);
+                      dialogRef.current?.showModal();
+                    }}>
+                    <img src={editsvg} alt="edit" />
+                  </button>
+                </>
+              ) : null}
             </div>
             <div style={{ fontWeight: "600", textAlign: "left" }}>
               {annon.username}
@@ -690,7 +720,7 @@ function App({ session, annotationData }: TSession) {
     modelUrl ? modelUrl : "/loading.gltf/"
   );
 
-  console.log(isModified);
+  // console.log(isModified);
   if (!annotationList) return null;
   return (
     <>
@@ -706,8 +736,7 @@ function App({ session, annotationData }: TSession) {
                 : annotationStatus === "Solved"
                 ? "#E6FFA5"
                 : "#FFD4DF",
-          }}
-        >
+          }}>
           <p style={{ margin: 0, padding: 0 }}>
             {!isModified ? "" : "#" + selectedAnnotation?.anno_id}
           </p>
@@ -728,8 +757,7 @@ function App({ session, annotationData }: TSession) {
                   annotationStatus,
                 });
               }
-            }}
-          >
+            }}>
             <input
               className="input-popup"
               name="annotation_title"
@@ -759,8 +787,7 @@ function App({ session, annotationData }: TSession) {
                       | "In Progress"
                       | "Solved"
                   )
-                }
-              >
+                }>
                 <option value="Not Solved">🔴 Not Solved</option>
                 <option value="In Progress">🟠 In Progress</option>
                 <option value="Solved">🟢 Solved</option>
@@ -774,8 +801,7 @@ function App({ session, annotationData }: TSession) {
                   setAnnotationTitle("");
                   setAnnationStatus("Not Solved");
                   dialogRef.current?.close();
-                }}
-              >
+                }}>
                 {" "}
                 Close{" "}
               </button>
@@ -786,8 +812,34 @@ function App({ session, annotationData }: TSession) {
           </form>
         </dialog>
         {/* <button className="btn_resetview">Reset view</button> */}
-        <div id="r">
-          <div style={{ fontWeight: 700 }}>Annotation Panel</div>
+        <div className="session-header">
+          <button className="btn-back-to-main">Back to main</button>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div>Session Name</div>
+            <button
+              className="btn-copy-link"
+              style={{ background: "transparent", padding: "0.4em 0.6em" }}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="30"
+                viewBox="0 0 24 24">
+                <path d="M8.465 11.293c1.133-1.133 3.109-1.133 4.242 0l.707.707 1.414-1.414-.707-.707c-.943-.944-2.199-1.465-3.535-1.465s-2.592.521-3.535 1.465L4.929 12a5.008 5.008 0 0 0 0 7.071 4.983 4.983 0 0 0 3.535 1.462A4.982 4.982 0 0 0 12 19.071l.707-.707-1.414-1.414-.707.707a3.007 3.007 0 0 1-4.243 0 3.005 3.005 0 0 1 0-4.243l2.122-2.121z"></path>
+                <path d="m12 4.929-.707.707 1.414 1.414.707-.707a3.007 3.007 0 0 1 4.243 0 3.005 3.005 0 0 1 0 4.243l-2.122 2.121c-1.133 1.133-3.109 1.133-4.242 0L10.586 12l-1.414 1.414.707.707c.943.944 2.199 1.465 3.535 1.465s2.592-.521 3.535-1.465L19.071 12a5.008 5.008 0 0 0 0-7.071 5.006 5.006 0 0 0-7.071 0z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div className="r">
+          <div
+            style={{
+              fontSize: "18px",
+              background: "black",
+              color: "#fff",
+              padding: "16px 0px",
+            }}>
+            Annotation Panel
+          </div>
           <AnnotationPanel />
         </div>
         <div className="hello">
@@ -798,8 +850,7 @@ function App({ session, annotationData }: TSession) {
         <Canvas
           className="canvas"
           ref={canvasRef}
-          camera={{ fov: 50, position: [2, 2, 5] }}
-        >
+          camera={{ fov: 50, position: [2, 2, 5] }}>
           <Suspense fallback={null}>
             <CameraControls ref={cameraControlRef} />
             <Scene />

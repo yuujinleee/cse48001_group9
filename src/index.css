@@ -76,12 +76,16 @@ select {
   margin-left: 15px;
   margin-top: 15px;
   width: 200px;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 0.5em;
+  color: #000000;
+  text-align: left;
+  /* background: rgba(0, 0, 0, 0.8); */
+  /* border-radius: 0.5em; */
   font-size: 12px;
   line-height: 1.2;
   transition: opacity 0.5s;
+  /* border: 1px solid black; */
+  box-shadow: inset 0px 0px 0px 1px black;
+  line-height: 18px;
 
   /* For numbers */
   &::before {
@@ -91,12 +95,12 @@ select {
     left: -30px;
     width: 30px;
     height: 30px;
-    border: 2px solid #fff;
+    /* border: 2px solid #fff; */
     border-radius: 50%;
     font-size: 16px;
     line-height: 30px;
     text-align: center;
-    background: rgba(0, 0, 0, 0.8);
+    /* background: rgba(0, 0, 0, 0.8); */
   }
 }
 
@@ -117,6 +121,11 @@ select {
   line-height: 30px;
   text-align: center;
   background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+}
+
+.number:hover {
+  background: rgba(110, 110, 110, 0.8);
 }
 
 .annon_content {
@@ -139,15 +148,43 @@ select {
   margin: auto;
 }
 
-#r {
+.session-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  padding: 10px 20px;
+  width: 100vw;
+  font-size: 24px;
+  text-align: left;
+}
+
+.btn-back-to-main {
+  border: 2px solid black;
+  background: transparent;
+  font-size: 14px;
+  /* margin-bottom: 6px; */
+}
+
+.btn-back-to-main:hover {
+  background: #000000;
+  color: white;
+}
+
+.btn-copy-link:hover svg {
+  fill: #9dd20a;
+}
+
+.r {
   /* position: fixed;
   top: 0;
   right: 0; */
   width: 350px;
+  min-width: 240px;
   /* height: 100%; */
-  background-color: #fff;
+  background-color: #e2e2e2;
   border-left: 1px solid #353535;
-  padding: 10px;
+  /* padding: 10px; */
   z-index: 1;
 }
 
