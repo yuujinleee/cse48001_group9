@@ -71,7 +71,7 @@ export default function UserPage({ session }: { session: Session }) {
                     <img
                       className="my-session-thumbnail"
                       src={
-                        "https://img.animalplanet.co.kr/news/2020/05/20/700/al43zzl8j3o72bkbux29.jpg"
+                        "https://cdn.discordapp.com/attachments/897129646385147914/1183430896385277962/Thumbnail_session.png"
                       }
                     />
                     <div className="my-session-item-right">
@@ -85,14 +85,12 @@ export default function UserPage({ session }: { session: Session }) {
                       </div>
                       <a
                         href={`/room/${room.model_id}`}
-                        className="button-my-session-view"
-                      >
+                        className="button-my-session-view">
                         View session
                       </a>
                       <button
                         onClick={() => deleteRoom(room.id as number)}
-                        className="button-my-session-delete"
-                      >
+                        className="button-my-session-delete">
                         Delete
                       </button>
                     </div>
