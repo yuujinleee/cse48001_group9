@@ -1,6 +1,6 @@
 # Pixey 3d : Web-based Real-time 3D Collaboration App
-#### Origin of service name
-The name 'Pixey 3d' is reminiscent of 'pixie', often associated with mythical creatures known for their magical and helpful nature (like a Marvel Comic character 'Pixie'). In the context of Pixey3D, the name reflects the service's role as a collaborative assistant, facilitating teamwork and communication in the intricate world of 3D design. The name also carries a connection to "pixel," the smallest unit of a digital image. By incorporating "3D" into the name, Pixey3D emphasizes its focus on 3D design. The fusion of "Pixey" and "3D" highlights the platform's role in assisting and enhancing the collaborative process within the dynamic world of 3D modeling.
+
+![image](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmlhMnZ1OHpybHoyeDh6azhxd2JrejRvZTQ3cnJibWQ1NGlhNHY0eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/DcmYSTZWG7Il1TxvVb/giphy.gif)
 
 ### :page_with_curl:	Proposal
 * [PDF view (Github)](docs/CSE480_Proposal_Group9_221017.pdf)
