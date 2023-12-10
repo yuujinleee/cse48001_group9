@@ -174,8 +174,12 @@ export default function App() {
                 />
               </LoginPage>
             </Layout>
+          ) : !annotationData ? (
+            <>Loading...</>
           ) : (
-            <App_ session={session} annotationData={annotationData} />
+            <Suspense fallback="Loading...">
+              <App_ session={session} annotationData={annotationData} />
+            </Suspense>
           )}
         </Route>
       </Router>

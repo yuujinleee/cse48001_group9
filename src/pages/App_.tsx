@@ -156,9 +156,28 @@ function App({ session, annotationData }: TSession) {
     }
   }, [id]);
 
+  const [roomNameInfo, setRoomNameInfo] = useState<string>("");
+  const getRoomInfo = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from("room")
+        .select("*")
+        .eq("model_id", id);
+      if (error) {
+        throw error;
+      }
+      if (data) {
+        setRoomNameInfo(data[0].room_name);
+      }
+    } catch (error: any) {
+      alert(error.message);
+    }
+  }, [id]);
+
   useEffect(() => {
     if (id) {
       downLoadObj();
+      getRoomInfo();
     }
     const channel = supabase
       .channel("realtime annotation")
@@ -216,7 +235,7 @@ function App({ session, annotationData }: TSession) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [annotationList, downLoadObj, id]);
+  }, [annotationList, downLoadObj, getRoomInfo, id]);
   // useEffect(() => {
   //   const channel = supabase
   //     .channel("realtime annotation")
@@ -720,6 +739,13 @@ function App({ session, annotationData }: TSession) {
     modelUrl ? modelUrl : "/loading.gltf/"
   );
 
+  const [copySuccess, setCopySuccess] = useState("");
+
+  async function copyToClip() {
+    await navigator.clipboard.writeText(location.href);
+    setCopySuccess("Copied");
+  }
+
   // console.log(isModified);
   if (!annotationList) return null;
   return (
@@ -813,11 +839,14 @@ function App({ session, annotationData }: TSession) {
         </dialog>
         {/* <button className="btn_resetview">Reset view</button> */}
         <div className="session-header">
-          <button className="btn-back-to-main">Back to main</button>
+          <a href="/" className="btn-back-to-main">
+            Back to main
+          </a>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <div>Session Name</div>
+            <div>{!roomNameInfo ? id : roomNameInfo}</div>
             <button
               className="btn-copy-link"
+              onClick={() => copyToClip()}
               style={{ background: "transparent", padding: "0.4em 0.6em" }}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

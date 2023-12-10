@@ -163,6 +163,7 @@ select {
   border: 2px solid black;
   background: transparent;
   font-size: 14px;
+  padding: 0.6em 1.2em;
   /* margin-bottom: 6px; */
 }
 
@@ -172,7 +173,7 @@ select {
 }
 
 .btn-copy-link:hover svg {
-  fill: #9dd20a;
+  fill: #7fac03;
 }
 
 .r {
