@@ -739,11 +739,11 @@ function App({ session, annotationData }: TSession) {
     modelUrl ? modelUrl : "/loading.gltf/"
   );
 
-  const [copySuccess, setCopySuccess] = useState("");
+  // const [copySuccess, setCopySuccess] = useState("");
 
   async function copyToClip() {
     await navigator.clipboard.writeText(location.href);
-    setCopySuccess("Copied");
+    // setCopySuccess("Copied");
   }
 
   // console.log(isModified);
