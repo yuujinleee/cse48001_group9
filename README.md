@@ -23,7 +23,7 @@
 
 # Implementation Details with Key Features
 ![image](https://github.com/yuujinleee/cse48001_group9/assets/38070937/758638ce-9632-4640-8c9f-ce31b1d7982d)
-> Note that Tailwind CSS is not used
+* Note that Tailwind CSS is not used!
 
 ### 1. Session Creation and Management
 Users can initiate sessions by uploading a 3D model via drag and drop or by browsing the finder, and it will generate a unique session link for inviting participants to join the session.
